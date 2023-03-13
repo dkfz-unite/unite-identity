@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
-using Unite.Identity.Entities;
-using Unite.Identity.Extensions;
+using Unite.Identity.Data.Entities;
+using Unite.Identity.Data.Extensions;
 
 namespace Unite.Identity.Helpers;
 

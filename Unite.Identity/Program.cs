@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
-//using Microsoft.AspNetCore.Authentication.JwtBearer;
-//using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 //using UPSI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,28 +22,29 @@ builder.Services.AddControllers();
 
 builder.Services.AddCors();
 
-//byte[] key = System.Text.Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("API_KEY"));
+byte[] key = System.Text.Encoding.UTF8.GetBytes("ToDo"/*Environment.GetEnvironmentVariable("API_KEY")*/);
 
-//builder.Services
-//    .AddAuthentication(options =>
-//    {
-//        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-//    })
-//    .AddJwtBearer(options => {
-//        options.RequireHttpsMetadata = false;
-//        options.SaveToken = true;
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
 
-//        options.TokenValidationParameters = new TokenValidationParameters
-//        {
-//            IssuerSigningKey = new SymmetricSecurityKey(key),
-//            ValidateIssuerSigningKey = true,
-//            ValidateIssuer = false,
-//            ValidateAudience = false,
-//            ValidateLifetime = true,
-//            ClockSkew = TimeSpan.Zero
-//        };
-//    });
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuerSigningKey = true,
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
+    });
 
 builder.Services.AddAuthorization(options =>
 {
