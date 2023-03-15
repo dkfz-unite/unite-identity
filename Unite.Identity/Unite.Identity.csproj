@@ -15,6 +15,7 @@
     <None Remove="Services\" />
     <None Remove="Interfaces\" />
     <None Remove="Helpers\" />
+    <None Remove="Constants\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -23,10 +24,11 @@
     <Folder Include="Services\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Constants\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.DirectoryServices.Protocols" Version="7.0.0" />
     <PackageReference Include="Unite.Identity.Data" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.4" />
   </ItemGroup>
 </Project>
