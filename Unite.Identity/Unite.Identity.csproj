@@ -17,6 +17,8 @@
     <None Remove="Helpers\" />
     <None Remove="Constants\" />
     <None Remove="Resources\" />
+    <None Remove="Configuration\" />
+    <None Remove="Configuration\Options\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -27,6 +29,8 @@
     <Folder Include="Helpers\" />
     <Folder Include="Constants\" />
     <Folder Include="Resources\" />
+    <Folder Include="Configuration\" />
+    <Folder Include="Configuration\Options\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.DirectoryServices.Protocols" Version="7.0.0" />
