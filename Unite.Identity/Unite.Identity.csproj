@@ -16,6 +16,7 @@
     <None Remove="Interfaces\" />
     <None Remove="Helpers\" />
     <None Remove="Constants\" />
+    <None Remove="Resources\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -25,6 +26,7 @@
     <Folder Include="Interfaces\" />
     <Folder Include="Helpers\" />
     <Folder Include="Constants\" />
+    <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.DirectoryServices.Protocols" Version="7.0.0" />
