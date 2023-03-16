@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-//using UPSI.Services;
+using Unite.Identity.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +17,11 @@ builder.Logging.AddConsole();
 
 builder.Services.AddControllers();
 
-//builder.Services.AddTransient<AuthenticationService>();
-//builder.Services.AddTransient<MainzellisteService>();
+builder.Services.AddTransient<LDAPAuthenticationService>();
+builder.Services.AddTransient<UniteAuthenticationService>();
+builder.Services.AddTransient<UserService>();
+builder.Services.AddTransient<IdentityService>();
+builder.Services.AddTransient<SessionOptions>();
 
 builder.Services.AddCors();
 
