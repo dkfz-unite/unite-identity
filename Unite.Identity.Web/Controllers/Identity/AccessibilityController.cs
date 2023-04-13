@@ -1,19 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Unite.Identity.Services;
 
-namespace Unite.Identity.Controllers;
+namespace Unite.Identity.Web.Controllers.Identity;
 
-[Route("api/[controller]")]
+[Route("api/access")]
 public class AccessibilityController : Controller
 {
     private readonly UserService _userService;
-
 
     public AccessibilityController(UserService userService)
     {
         _userService = userService;
     }
-
 
     [HttpGet]
     public IActionResult Get(string email)
