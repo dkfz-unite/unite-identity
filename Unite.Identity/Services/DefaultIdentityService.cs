@@ -6,15 +6,16 @@ using Unite.Identity.Data.Services;
 
 namespace Unite.Identity.Services;
 
-public class IdentityService
+public class DefaultIdentityService : IIdentityService
 {
     private readonly IdentityDbContext _dbContext;
 
-    public IdentityService(IdentityDbContext dbContext)
+    public DefaultIdentityService(IdentityDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
+    // Hm put in base service ??
     public User GetUser(string email)
     {
         var user = _dbContext.Set<User>()
@@ -48,6 +49,7 @@ public class IdentityService
 
         return user;
     }
+
 
     public User SignInUser(string email, string password)
     {

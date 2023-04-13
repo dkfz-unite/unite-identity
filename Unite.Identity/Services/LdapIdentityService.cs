@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Text;
-using Unite.Identity.Interfaces;
 using Unite.Identity.Shared;
 
 namespace Unite.Identity.Services;
 
-public class LDAPAuthenticationService : IAuthenticationInterface
+public class LdapIdentityService //TODO : IIdentityService
 {
     public bool UserAuthentication(string userIdentifier, string userPass)
     {
@@ -45,7 +44,7 @@ public class LDAPAuthenticationService : IAuthenticationInterface
         return userValid;
     }
 
-    public LDAPAuthenticationService()
+    public LdapIdentityService()
     {
     }
 }

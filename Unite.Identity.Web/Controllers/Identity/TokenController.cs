@@ -1,22 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Unite.Identity.Configuration.Options;
-using Unite.Identity.Helpers;
 using Unite.Identity.Services;
+using Unite.Identity.Web.Helpers;
 
-namespace Unite.Identity.Controllers;
+namespace Unite.Identity.Web.Controllers.Identity;
 
-[Route("api/identity/[controller]")]
+[Route("api/refresh-token")]
 public class TokenController : Controller
 {
     private readonly ApiOptions _apiOptions;
-    private readonly IdentityService _identityService;
+    // Uuh ambiguous... TODO: 
+    private readonly IIdentityService _identityService;
     private readonly SessionService _sessionService;
     private readonly ILogger _logger;
 
-
     public TokenController(
         ApiOptions apiOptions,
-        IdentityService identityService,
+        IIdentityService identityService,
         SessionService sessionService,
         ILogger<TokenController> logger)
     {
@@ -25,7 +25,6 @@ public class TokenController : Controller
         _sessionService = sessionService;
         _logger = logger;
     }
-
 
     [HttpPost]
     public IActionResult Post(string login)
