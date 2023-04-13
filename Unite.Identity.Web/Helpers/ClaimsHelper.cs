@@ -2,7 +2,7 @@
 using Unite.Identity.Data.Entities;
 using Unite.Identity.Data.Extensions;
 
-namespace Unite.Identity.Helpers;
+namespace Unite.Identity.Web.Helpers;
 
 public class ClaimsHelper
 {

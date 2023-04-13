@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Unite.Identity.Helpers;
+namespace Unite.Identity.Web.Helpers;
 
 public class TokenHelper
 {

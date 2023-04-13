@@ -1,4 +1,4 @@
-﻿namespace Unite.Identity.Helpers;
+﻿namespace Unite.Identity.Web.Helpers;
 
 public class CookieHelper
 {
