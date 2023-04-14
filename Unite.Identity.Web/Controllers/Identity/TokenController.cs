@@ -9,19 +9,18 @@ namespace Unite.Identity.Web.Controllers.Identity;
 public class TokenController : Controller
 {
     private readonly ApiOptions _apiOptions;
-    // Uuh ambiguous... TODO: 
-    private readonly IIdentityService _identityService;
+    private readonly BaseIdentityService _baseIdentityService;
     private readonly SessionService _sessionService;
     private readonly ILogger _logger;
 
     public TokenController(
         ApiOptions apiOptions,
-        IIdentityService identityService,
+        BaseIdentityService baseIdentityService,
         SessionService sessionService,
         ILogger<TokenController> logger)
     {
         _apiOptions = apiOptions;
-        _identityService = identityService;
+        _baseIdentityService = baseIdentityService;
         _sessionService = sessionService;
         _logger = logger;
     }
@@ -38,7 +37,7 @@ public class TokenController : Controller
             return Unauthorized();
         }
 
-        var user = _identityService.GetUser(login);
+        var user = _baseIdentityService.GetUser(login);
 
         if (user == null)
         {

@@ -6,7 +6,5 @@ public interface IIdentityService
 {
     //public bool UserAuthentication(string userIdentifier, string userPass);
 
-    public User GetUser(string email);
-
     public User LoginUser(string login, string password);
 }

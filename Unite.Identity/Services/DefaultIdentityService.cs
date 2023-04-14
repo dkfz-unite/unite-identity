@@ -6,24 +6,10 @@ using Unite.Identity.Data.Services;
 
 namespace Unite.Identity.Services;
 
-public class DefaultIdentityService : IIdentityService
+public class DefaultIdentityService : BaseIdentityService, IIdentityService
 {
-    private readonly IdentityDbContext _dbContext;
-
-    public DefaultIdentityService(IdentityDbContext dbContext)
+    public DefaultIdentityService(IdentityDbContext dbContext) : base(dbContext)
     {
-        _dbContext = dbContext;
-    }
-
-    // Hm put in base service ??
-    public User GetUser(string email)
-    {
-        var user = _dbContext.Set<User>()
-            .Include(user => user.UserSessions)
-            .Include(user => user.UserPermissions)
-            .FirstOrDefault(user => user.Email == email);
-
-        return user;
     }
 
     public User RegisterUser(string email, string password, bool isRoot = false)
