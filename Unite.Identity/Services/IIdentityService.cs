@@ -8,5 +8,5 @@ public interface IIdentityService
 
     public User GetUser(string email);
 
-    public User SignInUser(string email, string password);
+    public User LoginUser(string login, string password);
 }

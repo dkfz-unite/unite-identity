@@ -33,7 +33,7 @@ public class IdentityDefaultController : ControllerBase
     [HttpPost]
     public IActionResult Register([FromBody] RegisterModel registerModel)
     {
-        var user = _identityService.SignUpUser(registerModel.Email, registerModel.Password);
+        var user = _identityService.RegisterUser(registerModel.Email, registerModel.Password);
 
         return user != null ? Ok() : BadRequest($"Email address '{registerModel.Email}' is not in access list or already registered");
     }
@@ -41,7 +41,7 @@ public class IdentityDefaultController : ControllerBase
     [HttpPost]
     public IActionResult Login([FromBody] LoginModel loginModel, [FromHeader(Name = "User-Agent")] string client)
     {
-        var user = _identityService.SignInUser(loginModel.Email, loginModel.Password);
+        var user = _identityService.LoginUser(loginModel.Email, loginModel.Password);
 
         if (user == null)
         {

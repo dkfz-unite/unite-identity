@@ -26,7 +26,7 @@ public class DefaultIdentityService : IIdentityService
         return user;
     }
 
-    public User SignUpUser(string email, string password, bool isRoot = false)
+    public User RegisterUser(string email, string password, bool isRoot = false)
     {
         var passwordHash = GetStringHash(password);
 
@@ -51,7 +51,7 @@ public class DefaultIdentityService : IIdentityService
     }
 
 
-    public User SignInUser(string email, string password)
+    public User LoginUser(string email, string password)
     {
         var passwordHash = GetStringHash(password);
 
@@ -69,7 +69,7 @@ public class DefaultIdentityService : IIdentityService
     {
         var passwordHash = GetStringHash(newPassword);
 
-        var user = SignInUser(email, oldPassword);
+        var user = LoginUser(email, oldPassword);
 
         if (user != null)
         {
