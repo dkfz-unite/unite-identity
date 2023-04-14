@@ -1,11 +1,22 @@
 ﻿using System;
 using System.Text;
+using Unite.Identity.Data.Entities;
+using Unite.Identity.Data.Services;
 using Unite.Identity.Shared;
 
 namespace Unite.Identity.Services;
 
-public class LdapIdentityService //TODO : IIdentityService
+public class LdapIdentityService : BaseIdentityService, IIdentityService
 {
+    public LdapIdentityService(IdentityDbContext dbContext) : base(dbContext)
+    {
+    }
+
+    public User LoginUser(string userIdentifier, string userPass)
+    {
+        throw new NotImplementedException();
+    }
+
     public bool UserAuthentication(string userIdentifier, string userPass)
     {
         var targetOU = "ToDo"; // Environment.GetEnvironmentVariable("LDAP_USER_TARGET_OU");
@@ -44,7 +55,5 @@ public class LdapIdentityService //TODO : IIdentityService
         return userValid;
     }
 
-    public LdapIdentityService()
-    {
-    }
+
 }
