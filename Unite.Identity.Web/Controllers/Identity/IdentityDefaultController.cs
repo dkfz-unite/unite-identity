@@ -31,23 +31,23 @@ public class IdentityDefaultController : ControllerBase
     //(string userId, string userPass)
 
     [HttpPost]
-    public IActionResult Register([FromBody] SignUpModel signUpModel)
+    public IActionResult Register([FromBody] RegisterModel registerModel)
     {
-        var user = _identityService.SignUpUser(signUpModel.Email, signUpModel.Password);
+        var user = _identityService.SignUpUser(registerModel.Email, registerModel.Password);
 
-        return user != null ? Ok() : BadRequest($"Email address '{signUpModel.Email}' is not in access list or already registered");
+        return user != null ? Ok() : BadRequest($"Email address '{registerModel.Email}' is not in access list or already registered");
     }
 
     [HttpPost]
-    public IActionResult Login([FromBody] SignInModel model, [FromHeader(Name = "User-Agent")] string client)
+    public IActionResult Login([FromBody] LoginModel loginModel, [FromHeader(Name = "User-Agent")] string client)
     {
-        var user = _identityService.SignInUser(model.Email, model.Password);
+        var user = _identityService.SignInUser(loginModel.Email, loginModel.Password);
 
         if (user == null)
         {
             var invalidCredentialsErrorMessage = $"Invalid login or password";
 
-            _logger.LogWarning($"{invalidCredentialsErrorMessage} for user '{model.Email}'");
+            _logger.LogWarning($"{invalidCredentialsErrorMessage} for user '{loginModel.Email}'");
 
             return BadRequest(invalidCredentialsErrorMessage);
         }
