@@ -5,7 +5,7 @@ using System.Security.Claims;
 using Unite.Identity.Web.Helpers;
 using Unite.Identity.Models;
 using Unite.Identity.Services;
-using Unite.Identity.Configuration.Options;
+using Unite.Identity.Web.Configuration.Options;
 
 namespace Unite.Identity.Web.Controllers.Users;
 

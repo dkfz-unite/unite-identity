@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Unite.Identity.Configuration.Options;
+using Unite.Identity.Web.Configuration.Options;
 using Unite.Identity.Models;
 using Unite.Identity.Services;
 using Unite.Identity.Web.Helpers;

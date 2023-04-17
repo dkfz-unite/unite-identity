@@ -17,6 +17,9 @@
     <None Remove="Controllers\Account\" />
     <None Remove="Controllers\Users\" />
     <None Remove="Helpers\" />
+    <None Remove="Configuration\" />
+    <None Remove="Configuration\Options\" />
+    <None Remove="Configuration\Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
@@ -24,6 +27,9 @@
     <Folder Include="Controllers\Account\" />
     <Folder Include="Controllers\Users\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Configuration\" />
+    <Folder Include="Configuration\Options\" />
+    <Folder Include="Configuration\Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Unite.Identity.Data" Version="2.1.0" />

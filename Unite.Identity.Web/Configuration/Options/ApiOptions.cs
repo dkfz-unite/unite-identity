@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Unite.Identity.Configuration.Options;
+namespace Unite.Identity.Web.Configuration.Options;
 
 public class ApiOptions
 {

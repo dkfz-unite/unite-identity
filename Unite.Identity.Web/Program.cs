@@ -1,7 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Unite.Identity.Data.Services;
+using Unite.Identity.Data.Services.Configuration.Options;
 using Unite.Identity.Services;
+using Unite.Identity.Web.Configuration.Options;
+using Unite.Identity.Web.Configuration.Extensions;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,70 +14,20 @@ builder.Logging.ClearProviders();
 
 builder.Logging.AddConsole();
 
-
-//builder.Services.AddSpaStaticFiles(configuration =>
-//{
-//    configuration.RootPath = "Client/dist";
-//});
-
 builder.Services.AddControllers();
 
-builder.Services.AddTransient<DefaultIdentityService>();
-builder.Services.AddTransient<LdapIdentityService>();
-builder.Services.AddTransient<UserService>();
-builder.Services.AddTransient<DefaultIdentityService>();
-builder.Services.AddTransient<SessionOptions>();
+builder.Services.AddServices();
 
 builder.Services.AddCors();
 
-byte[] key = System.Text.Encoding.UTF8.GetBytes("ToDo"/*Environment.GetEnvironmentVariable("API_KEY")*/);
+builder.Services.AddAuthentication(options => options.AddJwtAuthenticationOptions())
+                .AddJwtBearer(options => options.AddJwtBearerOptions());
 
-builder.Services
-    .AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.RequireHttpsMetadata = false;
-        options.SaveToken = true;
-
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            IssuerSigningKey = new SymmetricSecurityKey(key),
-            ValidateIssuerSigningKey = true,
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero
-        };
-    });
-
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("Data.Manager", policy => policy
-            .RequireClaim("permission", "Data.Write")
-            .RequireClaim("permission", "Data.Edit")
-            .RequireClaim("permission", "Data.Delete")
-        );
-});
+builder.Services.AddAuthorization(options => options.AddAuthorizationOptions());
 
 var app = builder.Build();
 
 app.UseHsts();
-
-if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Release")
-{
-    app.UseHttpsRedirection();
-}
-
-//app.UseSpaStaticFiles();
-
-//app.UseSpa(spa =>
-//{
-//    spa.Options.SourcePath = "Client";
-//});
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Unite.Identity.Configuration.Options;
+using Unite.Identity.Web.Configuration.Options;
 using Unite.Identity.Services;
 using Unite.Identity.Web.Helpers;
 

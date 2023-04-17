@@ -1,4 +1,4 @@
-﻿namespace Unite.Identity.Configuration.Options;
+﻿namespace Unite.Identity.Web.Configuration.Options;
 
 public class RootOptions
 {
