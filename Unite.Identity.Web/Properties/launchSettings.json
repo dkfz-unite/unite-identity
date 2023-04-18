@@ -23,7 +23,13 @@
       "applicationUrl": "https://localhost:7091;http://localhost:5059",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "UNITE_API_KEY": "Defautl32BitApiKeyHasToBeChanged"
+        "UNITE_API_KEY": "Defautl32BitApiKeyHasToBeChanged",
+        "UNITE_ROOT_USER": "UNITE_ROOT_USER",
+        "UNITE_ROOT_PASSWORD": "UNITE_ROOT_PASSWORD",
+        "UNITE_SQL_HOST": "UNITE_SQL_HOST",
+        "UNITE_SQL_PORT": "UNITE_SQL_PORT",
+        "UNITE_SQL_USER": "UNITE_SQL_USER",
+        "UNITE_SQL_PASSWORD": "UNITE_SQL_PASSWORD"
       },
       "dotnetRunMessages": true
     },
