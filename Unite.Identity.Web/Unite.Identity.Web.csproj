@@ -32,6 +32,8 @@
     <Folder Include="Configuration\Extensions\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Unite.Identity.Data" Version="2.1.0" />
+    <PackageReference Include="Macross.Json.Extensions" Version="3.0.0" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
   </ItemGroup>
 </Project>
