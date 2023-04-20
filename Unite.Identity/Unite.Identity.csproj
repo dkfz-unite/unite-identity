@@ -11,6 +11,7 @@
     <None Remove="Services\" />
     <None Remove="Constants\" />
     <None Remove="Resources\" />
+    <None Remove="Models\Validators\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -18,9 +19,11 @@
     <Folder Include="Services\" />
     <Folder Include="Constants\" />
     <Folder Include="Resources\" />
+    <Folder Include="Models\Validators\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.DirectoryServices.Protocols" Version="7.0.0" />
     <PackageReference Include="Unite.Identity.Data" Version="2.1.0" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.1.2" />
   </ItemGroup>
 </Project>
