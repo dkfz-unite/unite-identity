@@ -7,6 +7,7 @@ using Unite.Identity.Services;
 using Unite.Identity.Web.Configuration.Options;
 using Unite.Identity.Web.Configuration.Extensions;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,10 @@ builder.Services.AddAuthentication(options => options.AddJwtAuthenticationOption
                 .AddJwtBearer(options => options.AddJwtBearerOptions());
 
 builder.Services.AddAuthorization(options => options.AddAuthorizationOptions());
+
+builder.Services.AddControllers(options => options.AddMvcOptions())
+                .AddJsonOptions(options => options.AddJsonOptions())
+                .AddFluentValidation();
 
 var app = builder.Build();
 
