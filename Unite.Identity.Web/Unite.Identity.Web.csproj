@@ -21,6 +21,7 @@
     <None Remove="Configuration\Options\" />
     <None Remove="Configuration\Extensions\" />
     <None Remove="Configuration\Filters\" />
+    <None Remove="HostedServices\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
@@ -32,6 +33,7 @@
     <Folder Include="Configuration\Options\" />
     <Folder Include="Configuration\Extensions\" />
     <Folder Include="Configuration\Filters\" />
+    <Folder Include="HostedServices\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Macross.Json.Extensions" Version="3.0.0" />
