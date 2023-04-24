@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Unite.Identity.Services;
 using Unite.Identity.Models;
-using Unite.Composer.Web.Models.Admin;
 
 namespace Unite.Identity.Web.Controllers.Users;
 

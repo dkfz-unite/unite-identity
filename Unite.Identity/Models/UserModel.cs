@@ -1,6 +1,6 @@
 ﻿using Unite.Identity.Data.Entities.Enums;
 
-namespace Unite.Composer.Web.Models.Admin;
+namespace Unite.Identity.Models;
 
 public class AddUserModel
 {
