@@ -36,23 +36,6 @@ public class AccountController : Controller
         return Json(account);
     }
 
-    [HttpPut]
-    public IActionResult Put([FromBody] PasswordChangeModel model)
-    {
-        var currentUser = GetCurrentUser();
-
-        var updatedUser = _defaultIdentityService.ChangePassword(currentUser.Email, model.OldPassword, model.NewPassword);
-
-        if (updatedUser == null)
-        {
-            return BadRequest($"Invalid old password");
-        }
-
-        var account = CreateFrom(currentUser);
-
-        return Json(account);
-    }
-
     [HttpDelete]
     public IActionResult Delete(int id)
     {
