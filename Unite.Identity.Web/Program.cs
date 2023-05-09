@@ -8,6 +8,7 @@ using Unite.Identity.Web.Configuration.Options;
 using Unite.Identity.Web.Configuration.Extensions;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,8 +28,13 @@ builder.Services.AddAuthentication(options => options.AddJwtAuthenticationOption
 builder.Services.AddAuthorization(options => options.AddAuthorizationOptions());
 
 builder.Services.AddControllers(options => options.AddMvcOptions())
-                .AddJsonOptions(options => options.AddJsonOptions())
-                .AddFluentValidation();
+                .AddJsonOptions(options => options.AddJsonOptions());
+//.AddFluentValidation();
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
 
 var app = builder.Build();
 

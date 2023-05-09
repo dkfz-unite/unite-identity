@@ -1,5 +1,6 @@
 ﻿using System;
 using FluentValidation;
+using FluentValidation.AspNetCore;
 using Unite.Identity.Data.Services;
 using Unite.Identity.Data.Services.Configuration.Options;
 using Unite.Identity.Models;
@@ -37,6 +38,8 @@ public static class ConfigurationExtensions
 
     private static void AddValidation(this IServiceCollection services)
     {
+        services.AddFluentValidationAutoValidation();
+
         services.AddTransient<IValidator<AddUserModel>, AddUserModelValidator>();
         services.AddTransient<IValidator<EditUserModel>, EditUserModelValidator>();
         services.AddTransient<IValidator<RegisterModel>, RegisterModelValidator>();

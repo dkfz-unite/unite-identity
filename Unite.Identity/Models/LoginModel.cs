@@ -10,5 +10,4 @@ public class LoginModel
         set { _userLoginId = value; }
     }
     public string Password { get; set; }
-    public string Client { get; set; }
 }
