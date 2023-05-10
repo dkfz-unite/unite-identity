@@ -7,9 +7,11 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS restore
 ARG USER
 ARG TOKEN
 WORKDIR /src
-# RUN dotnet nuget add source https://nuget.pkg.github.com/dkfz-unite/index.json -n github -u ${USER} -p ${TOKEN} --store-password-in-clear-text
-# COPY ["Unite.Genome.Indices/Unite.Genome.Indices.csproj", "Unite.Genome.Indices/"]
-# RUN dotnet restore "Unite.Genome.Indices/Unite.Genome.Indices.csproj"
+RUN dotnet nuget add source https://nuget.pkg.github.com/dkfz-unite/index.json -n github -u ${USER} -p ${TOKEN} --store-password-in-clear-text
+COPY ["Unite.Identity/Unite.Identity.csproj", "Unite.Identity/"]
+COPY ["Unite.Identity.Web/Unite.Identity.Web.csproj", "Unite.Identity.Web/"]
+RUN dotnet restore "Unite.Identity/Unite.Identity.csproj"
+RUN dotnet restore "Unite.Identity.Web/Unite.Identity.Web.csproj"
 
 FROM restore as build
 COPY . .
