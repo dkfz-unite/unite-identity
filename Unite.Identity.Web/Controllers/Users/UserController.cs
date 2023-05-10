@@ -55,6 +55,7 @@ public class UserController : Controller
             : BadRequest($"User with email '{model.Email}' already exists");
     }
 
+    // TODO fix
     [HttpPut("")]
     public IActionResult Put([FromBody] EditUserModel model)
     {
