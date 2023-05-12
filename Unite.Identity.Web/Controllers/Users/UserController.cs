@@ -18,6 +18,7 @@ public class UserController : Controller
         _userService = userService;
     }
 
+    //TODO: Obsolete?
     [HttpGet("")]
     public IActionResult Check(string email)
     {
