@@ -5,7 +5,7 @@ using Unite.Identity.Web.Helpers;
 
 namespace Unite.Identity.Web.Controllers.Identity;
 
-[Route("api/refresh-token")]
+[Route("api/token")]
 public class TokenController : Controller
 {
     private readonly ApiOptions _apiOptions;
