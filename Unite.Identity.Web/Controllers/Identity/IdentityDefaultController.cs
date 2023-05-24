@@ -102,7 +102,7 @@ public class IdentityDefaultController : ControllerBase
 
     [Authorize]
     [HttpPut("password")]
-    public IActionResult Put([FromBody] PasswordChangeModel model)
+    public IActionResult ChangePassword([FromBody] PasswordChangeModel model)
     {
         var email = HttpContext.User.Claims.First(claim => claim.Type == ClaimTypes.Email).Value;
 
