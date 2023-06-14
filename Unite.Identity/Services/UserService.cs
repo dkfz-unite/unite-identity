@@ -57,7 +57,7 @@ public class UserService
             {
                 Email = email,
                 IsRoot = false,
-                IsRegistered = false,
+                IsActive = false,
                 UserPermissions = GetUserPermissions(permissions)
             };
 

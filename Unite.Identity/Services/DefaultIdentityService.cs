@@ -18,14 +18,14 @@ public class DefaultIdentityService : BaseIdentityService, IIdentityService
 
         var user = _dbContext.Set<User>().FirstOrDefault(user =>
             user.Email == email &&
-            user.IsRegistered == false
+            user.IsActive == false
         );
 
         if (user != null)
         {
             user.Password = passwordHash;
             user.IsRoot = isRoot;
-            user.IsRegistered = true;
+            user.IsActive = true;
 
             _dbContext.Update(user);
             _dbContext.SaveChanges();
