@@ -45,5 +45,7 @@ public static class ConfigurationExtensions
         services.AddTransient<IValidator<RegisterModel>, RegisterModelValidator>();
         services.AddTransient<IValidator<LoginModel>, LoginModelValidator>();
         services.AddTransient<IValidator<PasswordChangeModel>, PasswordChangeModelValidator>();
+        services.AddTransient<IValidator<AddProviderModel>, AddProviderModelValidator>();
+        services.AddTransient<IValidator<EditProviderModel>, EditProviderModelValidator>();
     }
 }
