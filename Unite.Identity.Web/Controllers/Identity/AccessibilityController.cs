@@ -23,7 +23,7 @@ public class AccessibilityController : Controller
 
         var emailNormalized = email.Trim().ToLower();
 
-        var candidate = _userService.GetUser(user => user.Email == emailNormalized && user.IsRegistered == false);
+        var candidate = _userService.GetUser(user => user.Email == emailNormalized && user.IsActive == false);
 
         return candidate != null ? Ok() : NotFound($"Email '{emailNormalized}' is not in access list.");
     }
