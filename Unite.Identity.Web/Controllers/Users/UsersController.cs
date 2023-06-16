@@ -30,7 +30,7 @@ public class UsersController : Controller
     public IActionResult Get()
     {
         var currentUserEmail = ClaimsHelper.GetValue(User.Claims, ClaimTypes.Email);
-        var rootUserEmail = _rootOptions.User;
+        var rootUserEmail = _rootOptions.UserLogin;
 
         var users = _userService
             .GetUsers(user => user.Email != currentUserEmail && user.Email != rootUserEmail)
