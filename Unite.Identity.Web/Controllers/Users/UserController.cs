@@ -60,7 +60,7 @@ public class UserController : Controller
     [HttpPut("")]
     public IActionResult Put([FromBody] EditUserModel model)
     {
-        var user = _userService.Update(model.Id.Value, model.Permissions);
+        var user = _userService.Update(model.Id.Value, model.ProviderId, model.Permissions);
 
         return user != null
             ? Json(new UserResource(user))

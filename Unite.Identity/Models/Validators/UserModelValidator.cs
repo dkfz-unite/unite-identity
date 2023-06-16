@@ -22,5 +22,8 @@ public class EditUserModelValidator : AbstractValidator<EditUserModel>
     {
         RuleFor(model => model.Id)
             .NotEmpty().WithMessage("Should not be empty");
+
+        RuleFor(model => model.ProviderId)
+            .NotEmpty().WithMessage("Should not be empty");
     }
 }

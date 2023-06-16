@@ -73,12 +73,13 @@ public class UserService
         }
     }
 
-    public User Update(int id, Permission[] permissions = null)
+    public User Update(int id, int providerId, Permission[] permissions = null)
     {
         var user = GetUser(id);
 
         if (user != null)
         {
+            user.ProviderId = providerId;
             user.UserPermissions = GetUserPermissions(permissions);
 
             _dbContext.Update(user);
