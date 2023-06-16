@@ -25,6 +25,7 @@ public static class ConfigurationExtensions
         services.AddTransient<LdapIdentityService>();
         services.AddTransient<SessionService>();
         services.AddTransient<UserService>();
+        services.AddTransient<ProviderService>();
 
         services.AddHostedService<RootHostedService>();
     }
