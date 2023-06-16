@@ -10,6 +10,9 @@ public class AddUserModelValidator : AbstractValidator<AddUserModel>
             .NotEmpty().WithMessage("Should not be empty")
             .EmailAddress().WithMessage("Should be an email address")
             .MaximumLength(100).WithMessage("Maximum length is 100");
+
+        RuleFor(model => model.ProviderId)
+            .NotEmpty().WithMessage("Should not be empty");
     }
 }
 

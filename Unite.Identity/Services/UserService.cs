@@ -47,7 +47,7 @@ public class UserService
             .ToArray();
     }
 
-    public User Add(string email, Permission[] permissions = null)
+    public User Add(string email, int providerId, Permission[] permissions = null)
     {
         var user = GetUser(user => user.Email == email);
 
@@ -58,7 +58,8 @@ public class UserService
                 Email = email,
                 IsRoot = false,
                 IsActive = false,
-                UserPermissions = GetUserPermissions(permissions)
+                ProviderId = providerId,
+                UserPermissions = GetUserPermissions(permissions),
             };
 
             _dbContext.Add(user);

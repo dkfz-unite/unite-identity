@@ -49,7 +49,7 @@ public class UserController : Controller
     [HttpPost("")]
     public IActionResult Post([FromBody] AddUserModel model)
     {
-        var user = _userService.Add(model.Email, model.Permissions);
+        var user = _userService.Add(model.Email, model.ProviderId, model.Permissions);
 
         return user != null
             ? Json(new UserResource(user))
