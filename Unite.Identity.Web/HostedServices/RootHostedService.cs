@@ -72,7 +72,7 @@ public class RootHostedService : BackgroundService
         }
     }
 
-    private Provider CreateUniteLdapProvider()
+    private void CreateUniteLdapProvider()
     {
         var provider = _providerService.GetProvider(provider => provider.Name == "UniteLdap");
 
@@ -82,7 +82,5 @@ public class RootHostedService : BackgroundService
 
             provider = _providerService.Add("UniteLdap", "UniteLdap", true, 1);
         }
-
-        return provider;
     }
 }
