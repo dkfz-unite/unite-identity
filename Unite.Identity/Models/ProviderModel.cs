@@ -1,5 +1,21 @@
 ﻿using System;
+using Unite.Identity.Data.Entities;
+
 namespace Unite.Identity.Models;
+
+public class ProviderModel
+{
+    public string Name { get; set; }
+    public string Label { get; set; }
+    public int? Priority { get; set; }
+
+    public ProviderModel(Provider provider)
+    {
+        Name = provider.Name;
+        Label = provider.Label;
+        Priority = provider.Priority;
+    }
+}
 
 public class AddProviderModel
 {
