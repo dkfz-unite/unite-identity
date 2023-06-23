@@ -83,7 +83,7 @@ public class RootHostedService : BackgroundService
         {
             _logger.LogInformation("Configuring 'UniteLdap' provider");
 
-            provider = _providerService.Add("UniteLdap", "UniteLdap", true, 1);
+            provider = _providerService.Add("UniteLdap", "Unite Ldap", true, 1);
         }
     }
 }
