@@ -31,8 +31,11 @@ public class RootHostedService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Identity root service started");
+        cancellationToken.Register(() => _logger.LogInformation("Identity root service stopped"));
+
         // Delay 5 seconds to let the web api start working
-        await Task.Delay(5000, cancellationToken);
+        //await Task.Delay(5000, cancellationToken);
 
 
         var defaultProvider = CreateDefaultProvider();
