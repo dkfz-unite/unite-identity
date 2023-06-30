@@ -5,7 +5,6 @@ using Unite.Identity.Web.Configuration.Options;
 using Unite.Identity.Models;
 using Unite.Identity.Services;
 using Unite.Identity.Web.Helpers;
-using Unite.Identity.Data.Entities;
 
 namespace Unite.Identity.Web.Controllers.Identity;
 
