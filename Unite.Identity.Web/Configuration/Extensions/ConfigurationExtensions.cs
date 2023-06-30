@@ -35,6 +35,7 @@ public static class ConfigurationExtensions
         services.AddTransient<ISqlOptions, SqlOptions>();
         services.AddTransient<ApiOptions>();
         services.AddTransient<RootOptions>();
+        services.AddTransient<ILdapOptions, LdapOptions>();
     }
 
     private static void AddValidation(this IServiceCollection services)
