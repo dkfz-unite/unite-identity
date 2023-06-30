@@ -1,48 +1,92 @@
-﻿using System;
+﻿using System.DirectoryServices.Protocols;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Unite.Identity.Data.Entities;
 using Unite.Identity.Data.Services;
+using Unite.Identity.Data.Services.Configuration.Options;
 using Unite.Identity.Shared;
 
 namespace Unite.Identity.Services;
 
 public class LdapIdentityService : BaseIdentityService, IIdentityService
 {
-    public LdapIdentityService(IdentityDbContext dbContext) : base(dbContext)
+    private readonly ILdapOptions _options;
+
+    private LDAPAuthentication _ldapAuth;
+    private LDAPAuthentication ldapAuth
     {
+        get
+        {
+            if (_ldapAuth == null)
+            {
+                int? finalPortNumber = null;
+                if (_options.Port != null)
+                {
+                    finalPortNumber = Int16.Parse(_options.Port);
+                }
+
+                _ldapAuth = new LDAPAuthentication(_options.Server, _options.ServiceUserRNA, _options.ServiceUserPassword, _options.UserTargetOU, finalPortNumber);
+            }
+
+            return _ldapAuth;
+        }
+    }
+
+    public LdapIdentityService(
+        IdentityDbContext dbContext,
+        ILdapOptions options) : base(dbContext)
+    {
+        _options = options;
     }
 
     public User LoginUser(string userIdentifier, string userPass)
     {
-        throw new NotImplementedException();
+        bool userIdIsEmail = userIdentifier.Contains("@");
+        string userMail = userIdentifier;
+        if (!userIdIsEmail)
+        {
+            var result = ldapAuth.ReadUserEntry(userIdentifier);
+            if (result != null)
+            {
+                try
+                {
+                    userMail = result.Attributes["mail"][0].ToString();
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }
+        }
+
+        var user = _dbContext.Set<User>()
+            .Include(user => user.UserPermissions)
+            .FirstOrDefault(user =>
+                user.Email == userMail
+                && user.Provider.Name == "LDAP");
+
+        if (user == null)
+        {
+            return null;
+        }
+
+        var userCredentialsValid = ldapAuth.UserCredentialsValid(userIdentifier, userPass);
+        if (!userCredentialsValid)
+        {
+            return null;
+        }
+
+        return user;
     }
 
     public bool UserAuthentication(string userIdentifier, string userPass)
     {
-        var targetOU = "ToDo"; // Environment.GetEnvironmentVariable("LDAP_USER_TARGET_OU");
-        var ldapServer = "ToDo"; // Environment.GetEnvironmentVariable("LDAP_SERVER");
-        var portNumber = "ToDo"; // Environment.GetEnvironmentVariable("LDAP_PORT");
-        var serviceUserRNA = "ToDo"; // Environment.GetEnvironmentVariable("LDAP_SERVICE_USER_RNA");
-        var serviceUserPassword = "ToDo"; // Environment.GetEnvironmentVariable("LDAP_SERVICE_USER_PASSWORD");
-
-        if (ldapServer == null || serviceUserRNA == null || serviceUserPassword == null || targetOU == null)
-        {
-            throw new ArgumentException("Missing environment variables! Configuration incomplete!!");
-        }
-
-        int? finalPortNumber = null;
-        if (portNumber != null)
-        {
-            finalPortNumber = Int16.Parse(portNumber);
-        }
-
-        var ldapAuthenticator = new LDAPAuthentication(ldapServer, serviceUserRNA, serviceUserPassword, targetOU, finalPortNumber);
-
         var decodedBase64Pass = Encoding.UTF8.GetString(Convert.FromBase64String(userPass));
         var userValid = false;
         try
         {
-            userValid = ldapAuthenticator.UserCredentialsValid(userIdentifier, decodedBase64Pass);
+            userValid = ldapAuth.UserCredentialsValid(userIdentifier, decodedBase64Pass);
         }
         catch (Exception ex)
         {
