@@ -42,7 +42,7 @@ public class RootHostedService : BackgroundService
 
         CreateRootUser(defaultProvider);
 
-        if (_options.UniteLdapActive == "true")
+        if (_options.LdapProviderActive == "true")
         {
             CreateUniteLdapProvider();
         }
@@ -50,13 +50,17 @@ public class RootHostedService : BackgroundService
 
     private Provider CreateDefaultProvider()
     {
-        var provider = _providerService.GetProvider(provider => provider.Name == _options.ProviderName);
+        var provider = _providerService.GetProvider(provider => provider.Name == "Unite");
 
         if (provider == null)
         {
             _logger.LogInformation("Configuring 'Root' provider");
 
-            provider = _providerService.Add(_options.ProviderName, _options.ProviderName, true, Int32.Parse(_options.ProviderPriority));
+            provider = _providerService.Add(
+                "Unite",
+                _options.DefaultProviderLabel,
+                true,
+                Int32.Parse(_options.DefaultProviderPriority));
         }
 
         return provider;
@@ -77,13 +81,17 @@ public class RootHostedService : BackgroundService
 
     private void CreateUniteLdapProvider()
     {
-        var provider = _providerService.GetProvider(provider => provider.Name == "UniteLdap");
+        var provider = _providerService.GetProvider(provider => provider.Name == "LDAP");
 
         if (provider == null)
         {
             _logger.LogInformation("Configuring 'UniteLdap' provider");
 
-            provider = _providerService.Add("UniteLdap", "Unite Ldap", true, 1);
+            provider = _providerService.Add(
+                "LDAP",
+                _options.LdapProviderLabel,
+                _options.LdapProviderActive == "true",
+                Int32.Parse(_options.LdapProviderPriority));
         }
     }
 }

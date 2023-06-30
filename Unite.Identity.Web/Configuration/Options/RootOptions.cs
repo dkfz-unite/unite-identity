@@ -2,20 +2,20 @@
 
 public class RootOptions
 {
-    public string ProviderName
+    public string DefaultProviderLabel
     {
         get
         {
-            var name = Environment.GetEnvironmentVariable("UNITE_DEFAULT_NAME");
+            var label = Environment.GetEnvironmentVariable("UNITE_DEFAULT_LABEL");
 
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentNullException("'UNITE_DEFAULT_NAME' environment variable has to be set");
+            if (string.IsNullOrWhiteSpace(label))
+                throw new ArgumentNullException("'UNITE_DEFAULT_LABEL' environment variable has to be set");
 
-            return name;
+            return label;
         }
     }
 
-    public string ProviderPriority
+    public string DefaultProviderPriority
     {
         get
         {
@@ -54,16 +54,42 @@ public class RootOptions
         }
     }
 
-    public string UniteLdapActive
+    public string LdapProviderActive
     {
         get
         {
-            var password = Environment.GetEnvironmentVariable("UNITE_LDAP_ACTIVE");
+            var active = Environment.GetEnvironmentVariable("UNITE_LDAP_ACTIVE");
 
-            if (string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(active))
                 throw new ArgumentNullException("'UNITE_LDAP_ACTIVE' environment variable has to be set");
 
-            return password;
+            return active;
+        }
+    }
+
+    public string LdapProviderLabel
+    {
+        get
+        {
+            var label = Environment.GetEnvironmentVariable("UNITE_LDAP_LABEL");
+
+            if (string.IsNullOrWhiteSpace(label))
+                throw new ArgumentNullException("'UNITE_LDAP_LABEL' environment variable has to be set");
+
+            return label;
+        }
+    }
+
+    public string LdapProviderPriority
+    {
+        get
+        {
+            var priority = Environment.GetEnvironmentVariable("UNITE_LDAP_PRIORITY");
+
+            if (string.IsNullOrWhiteSpace(priority))
+                throw new ArgumentNullException("'UNITE_LDAP_PRIORITY' environment variable has to be set");
+
+            return priority;
         }
     }
 }
