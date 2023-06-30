@@ -13,7 +13,6 @@ public class BaseIdentityService
         _dbContext = dbContext;
     }
 
-    //TODO: email / login ? db
     public User GetUser(string email)
     {
         var user = _dbContext.Set<User>()
