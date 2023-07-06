@@ -1,16 +1,17 @@
-﻿using System;
-using Unite.Identity.Data.Entities;
+﻿using Unite.Identity.Data.Entities;
 
 namespace Unite.Identity.Models;
 
 public class ProviderModel
 {
+    public int Id { get; set; }
     public string Name { get; set; }
     public string Label { get; set; }
     public int? Priority { get; set; }
 
     public ProviderModel(Provider provider)
     {
+        Id = provider.Id;
         Name = provider.Name;
         Label = provider.Label;
         Priority = provider.Priority;

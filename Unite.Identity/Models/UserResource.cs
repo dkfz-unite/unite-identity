@@ -9,6 +9,7 @@ public class UserResource
     public string Email { get; set; }
     public bool IsActive { get; set; }
     public string[] Permissions { get; set; }
+    public string Provider { get; set; }
 
     public UserResource(User user)
     {
@@ -21,6 +22,13 @@ public class UserResource
             Permissions = user.UserPermissions
                 .Select(userPermission => userPermission.PermissionId.ToDefinitionString())
                 .ToArray();
+        }
+
+        if (user.Provider != null)
+        {
+            Provider = user.Provider.Label != null
+                ? user.Provider.Label
+                : user.Provider.Name;
         }
     }
 }

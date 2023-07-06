@@ -43,6 +43,7 @@ public class UserService
     {
         return _dbContext.Set<User>()
             .Include(user => user.UserPermissions)
+            .Include(user => user.Provider)
             .Where(predicate)
             .ToArray();
     }
