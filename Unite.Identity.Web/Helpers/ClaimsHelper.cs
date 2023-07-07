@@ -13,6 +13,17 @@ public class ClaimsHelper
         var claims = new List<Claim>();
 
         claims.Add(new Claim(ClaimTypes.Email, user.Email));
+        switch (user.Provider?.Name)
+        {
+            case "LDAP":
+                claims.Add(new Claim(ClaimTypes.AuthenticationMethod, "ldap"));
+                break;
+            case "Unite":
+                claims.Add(new Claim(ClaimTypes.AuthenticationMethod, "default"));
+                break;
+            default:
+                break;
+        }
 
         if (user.IsRoot)
         {

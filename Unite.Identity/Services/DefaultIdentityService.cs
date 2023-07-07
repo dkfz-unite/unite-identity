@@ -43,6 +43,7 @@ public class DefaultIdentityService : BaseIdentityService, IIdentityService
 
         var user = _dbContext.Set<User>()
             .Include(user => user.UserPermissions)
+            .Include(user => user.Provider)
             .FirstOrDefault(user =>
                 user.Email == email &&
                 user.Password == passwordHash
