@@ -32,6 +32,12 @@ public class UserService
             .FirstOrDefault(predicate);
     }
 
+    public Provider GetProvider(int id)
+    {
+        return _dbContext.Set<Provider>()
+            .FirstOrDefault(provider => provider.Id == id);
+    }
+
     public User[] GetUsers()
     {
         return _dbContext.Set<User>()
@@ -51,14 +57,15 @@ public class UserService
     public User Add(string email, int providerId, Permission[] permissions = null)
     {
         var user = GetUser(user => user.Email == email);
+        var provider = GetProvider(providerId);
 
-        if (user == null)
+        if (user == null && provider != null)
         {
             user = new User
             {
                 Email = email,
                 IsRoot = false,
-                IsActive = false,
+                IsActive = provider.Name != "Unite", // Only Unite users need to register
                 ProviderId = providerId,
                 UserPermissions = GetUserPermissions(permissions),
             };
