@@ -20,7 +20,7 @@ public class ProviderService
     public Provider GetProvider(int id)
     {
         return _dbContext.Set<Provider>()
-            .FirstOrDefault(user => user.Id == id);
+            .FirstOrDefault(provider => provider.Id == id);
     }
 
     public Provider GetProvider(Expression<Func<Provider, bool>> predicate)
