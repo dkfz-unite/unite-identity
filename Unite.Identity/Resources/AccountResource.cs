@@ -6,4 +6,6 @@ public class AccountResource
 
     public string[] Permissions { get; set; }
     public string[] Devices { get; set; }
+
+    public string Provider { get; set; }
 }
