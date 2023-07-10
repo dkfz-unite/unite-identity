@@ -18,6 +18,7 @@ public class BaseIdentityService
         var user = _dbContext.Set<User>()
             .Include(user => user.UserSessions)
             .Include(user => user.UserPermissions)
+            .Include(user => user.Provider)
             .FirstOrDefault(user => user.Email == email);
 
         return user;
