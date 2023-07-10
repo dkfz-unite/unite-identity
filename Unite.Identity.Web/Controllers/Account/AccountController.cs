@@ -66,6 +66,10 @@ public class AccountController : Controller
             .Select(userPermission => userPermission.PermissionId.ToDefinitionString())
             .ToArray();
 
+        account.Provider = user.Provider?.Label != null && user.Provider?.Label != ""
+            ? user.Provider?.Label
+            : user.Provider?.Name;
+
         return account;
     }
 }
