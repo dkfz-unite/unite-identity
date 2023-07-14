@@ -17,7 +17,16 @@ public class LdapOptions : ILdapOptions
         }
     }
 
-    public string Port => Environment.GetEnvironmentVariable("UNITE_LDAP_PORT");
+    public int? Port
+    {
+        get
+        {
+            int port;
+            bool isInt = int.TryParse(Environment.GetEnvironmentVariable("UNITE_LDAP_PORT"), out port);
+
+            return isInt ? port : null;
+        }
+    }
 
     public string UserTargetOU
     {

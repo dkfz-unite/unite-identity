@@ -15,7 +15,7 @@ public class RootOptions
         }
     }
 
-    public string DefaultProviderPriority
+    public int DefaultProviderPriority
     {
         get
         {
@@ -24,7 +24,7 @@ public class RootOptions
             if (string.IsNullOrWhiteSpace(priority))
                 throw new ArgumentNullException("'UNITE_DEFAULT_PRIORITY' environment variable has to be set");
 
-            return priority;
+            return int.Parse(priority);
         }
     }
 
@@ -54,7 +54,7 @@ public class RootOptions
         }
     }
 
-    public string LdapProviderActive
+    public bool LdapProviderActive
     {
         get
         {
@@ -63,7 +63,7 @@ public class RootOptions
             if (string.IsNullOrWhiteSpace(active))
                 throw new ArgumentNullException("'UNITE_LDAP_ACTIVE' environment variable has to be set");
 
-            return active;
+            return bool.Parse(active);
         }
     }
 
@@ -80,7 +80,7 @@ public class RootOptions
         }
     }
 
-    public string LdapProviderPriority
+    public int LdapProviderPriority
     {
         get
         {
@@ -89,7 +89,7 @@ public class RootOptions
             if (string.IsNullOrWhiteSpace(priority))
                 throw new ArgumentNullException("'UNITE_LDAP_PRIORITY' environment variable has to be set");
 
-            return priority;
+            return int.Parse(priority);
         }
     }
 }

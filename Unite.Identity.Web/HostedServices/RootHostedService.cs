@@ -37,12 +37,11 @@ public class RootHostedService : BackgroundService
         // Delay 5 seconds to let the web api start working
         //await Task.Delay(5000, cancellationToken);
 
-
         var defaultProvider = CreateDefaultProvider();
 
         CreateRootUser(defaultProvider);
 
-        if (_options.LdapProviderActive == "true")
+        if (_options.LdapProviderActive)
         {
             CreateUniteLdapProvider();
         }
@@ -60,7 +59,7 @@ public class RootHostedService : BackgroundService
                 "Unite",
                 _options.DefaultProviderLabel,
                 true,
-                Int32.Parse(_options.DefaultProviderPriority));
+                _options.DefaultProviderPriority);
         }
 
         return provider;
@@ -90,8 +89,8 @@ public class RootHostedService : BackgroundService
             provider = _providerService.Add(
                 "LDAP",
                 _options.LdapProviderLabel,
-                _options.LdapProviderActive == "true",
-                Int32.Parse(_options.LdapProviderPriority));
+                _options.LdapProviderActive,
+                _options.LdapProviderPriority);
         }
     }
 }
