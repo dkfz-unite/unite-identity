@@ -65,7 +65,7 @@ public class UserService
             {
                 Email = email,
                 IsRoot = false,
-                IsActive = provider.Name != "Unite", // Only Unite users need to register
+                IsActive = provider.Name != Providers.Default, // Only Unite users need to register
                 ProviderId = providerId,
                 UserPermissions = GetUserPermissions(permissions),
             };
