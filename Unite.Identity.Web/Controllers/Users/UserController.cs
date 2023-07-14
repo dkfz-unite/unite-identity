@@ -50,7 +50,7 @@ public class UserController : Controller
     [HttpPost("")]
     public IActionResult Post([FromBody] AddUserModel model)
     {
-        var user = _userService.Add(model.Email, model.ProviderId, model.Permissions);
+        var user = _userService.Add(model.Email, model.ProviderId.Value, model.Permissions);
 
         return user != null
             ? Json(new UserResource(user))
@@ -61,7 +61,7 @@ public class UserController : Controller
     [HttpPut("")]
     public IActionResult Put([FromBody] EditUserModel model)
     {
-        var user = _userService.Update(model.Id.Value, model.ProviderId, model.Permissions);
+        var user = _userService.Update(model.Id.Value, model.ProviderId.Value, model.Permissions);
 
         return user != null
             ? Json(new UserResource(user))

@@ -12,7 +12,7 @@ public class AddUserModel
         set { _email = value; }
     }
 
-    public int ProviderId { get; set; }
+    public int? ProviderId { get; set; }
 
     public Permission[] Permissions { get; set; }
 }
@@ -21,7 +21,7 @@ public class EditUserModel
 {
     public int? Id { get; set; }
 
-    public int ProviderId { get; set; }
+    public int? ProviderId { get; set; }
 
     public Permission[] Permissions { get; set; }
 }
