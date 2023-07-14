@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Unite.Identity.Services;
 using System.Data;
-using Unite.Identity.Models;
+using Unite.Identity.Resources;
 
 namespace Unite.Identity.Web.Controllers.Identity;
 
@@ -23,7 +23,7 @@ public class SettingsController : Controller
         var providers = _providerService
             .GetProviders(provider => provider.IsActive == true)
             .OrderBy(provider => provider.Priority)
-            .Select(provider => new ProviderModel(provider))
+            .Select(provider => new ProviderResource(provider))
             .ToArray();
 
         return Json(providers);
