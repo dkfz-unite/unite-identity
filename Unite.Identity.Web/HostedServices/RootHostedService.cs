@@ -49,14 +49,14 @@ public class RootHostedService : BackgroundService
 
     private Provider CreateDefaultProvider()
     {
-        var provider = _providerService.GetProvider(provider => provider.Name == "Unite");
+        var provider = _providerService.GetProvider(provider => provider.Name == Providers.Default);
 
         if (provider == null)
         {
             _logger.LogInformation("Configuring 'Root' provider");
 
             provider = _providerService.Add(
-                "Unite",
+                Providers.Default,
                 _options.DefaultProviderLabel,
                 true,
                 _options.DefaultProviderPriority);
@@ -67,7 +67,7 @@ public class RootHostedService : BackgroundService
 
     private void CreateRootUser(Provider defaultProvider)
     {
-        var user = _defaultIdentityService.GetUser(_options.UserLogin);
+        var user = _defaultIdentityService.GetUser(_options.UserLogin, Providers.Default);
 
         if (user == null)
         {
@@ -80,14 +80,14 @@ public class RootHostedService : BackgroundService
 
     private void CreateUniteLdapProvider()
     {
-        var provider = _providerService.GetProvider(provider => provider.Name == "LDAP");
+        var provider = _providerService.GetProvider(provider => provider.Name == Providers.Ldap);
 
         if (provider == null)
         {
             _logger.LogInformation("Configuring 'UniteLdap' provider");
 
             provider = _providerService.Add(
-                "LDAP",
+                Providers.Ldap,
                 _options.LdapProviderLabel,
                 _options.LdapProviderActive,
                 _options.LdapProviderPriority);

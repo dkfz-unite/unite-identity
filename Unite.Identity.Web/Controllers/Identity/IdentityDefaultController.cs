@@ -5,6 +5,7 @@ using Unite.Identity.Web.Configuration.Options;
 using Unite.Identity.Models;
 using Unite.Identity.Services;
 using Unite.Identity.Web.Helpers;
+using Unite.Identity.Constants;
 
 namespace Unite.Identity.Web.Controllers.Identity;
 
@@ -27,8 +28,6 @@ public class IdentityDefaultController : ControllerBase
         _sessionService = sessionService;
         _logger = logger;
     }
-
-    //(string userId, string userPass)
 
     [HttpPost("register")]
     public IActionResult Register([FromBody] RegisterModel registerModel)
@@ -73,7 +72,7 @@ public class IdentityDefaultController : ControllerBase
         {
             var email = ClaimsHelper.GetValue(User.Claims, ClaimTypes.Email);
 
-            var user = _defaultIdentityService.GetUser(email);
+            var user = _defaultIdentityService.GetUser(email, Providers.Default);
 
             if (user == null)
             {
@@ -105,7 +104,7 @@ public class IdentityDefaultController : ControllerBase
     {
         var email = HttpContext.User.Claims.First(claim => claim.Type == ClaimTypes.Email).Value;
 
-        var currentUser = _defaultIdentityService.GetUser(email);
+        var currentUser = _defaultIdentityService.GetUser(email, Providers.Default);
 
         var updatedUser = _defaultIdentityService.ChangePassword(currentUser.Email, model.OldPassword, model.NewPassword);
 

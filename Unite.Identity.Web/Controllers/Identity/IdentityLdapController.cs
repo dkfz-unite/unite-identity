@@ -5,6 +5,7 @@ using Unite.Identity.Web.Configuration.Options;
 using Unite.Identity.Models;
 using Unite.Identity.Services;
 using Unite.Identity.Web.Helpers;
+using Unite.Identity.Constants;
 
 namespace Unite.Identity.Web.Controllers.Identity;
 
@@ -63,7 +64,7 @@ public class IdentityLdapController : ControllerBase
         {
             var email = ClaimsHelper.GetValue(User.Claims, ClaimTypes.Email);
 
-            var user = _ldapIdentityService.GetUser(email);
+            var user = _ldapIdentityService.GetUser(email, Providers.Ldap);
 
             if (user == null)
             {
