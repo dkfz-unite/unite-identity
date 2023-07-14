@@ -12,16 +12,13 @@ namespace Unite.Identity.Web.Controllers.Account;
 [Authorize]
 public class AccountController : Controller
 {
-    private readonly DefaultIdentityService _defaultIdentityService;
-    private readonly ILogger _logger;
+    private readonly BaseIdentityService _baseIdentityService;
 
 
     public AccountController(
-        DefaultIdentityService identityService,
-        ILogger<AccountController> logger)
+        BaseIdentityService identityService)
     {
-        _defaultIdentityService = identityService;
-        _logger = logger;
+        _baseIdentityService = identityService;
     }
 
 
@@ -41,12 +38,11 @@ public class AccountController : Controller
         throw new NotImplementedException();
     }
 
-
     private User GetCurrentUser()
     {
         var email = HttpContext.User.Claims.First(claim => claim.Type == ClaimTypes.Email).Value;
 
-        var user = _defaultIdentityService.GetUser(email);
+        var user = _baseIdentityService.GetUser(email);
 
         return user;
     }
