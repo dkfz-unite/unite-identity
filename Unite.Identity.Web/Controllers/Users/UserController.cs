@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Unite.Identity.Services;
 using Unite.Identity.Models;
+using Unite.Identity.Resources;
+using Unite.Identity.Services;
 
 namespace Unite.Identity.Web.Controllers.Users;
 

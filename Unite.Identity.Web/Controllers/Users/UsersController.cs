@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Security.Claims;
 using Unite.Identity.Web.Helpers;
-using Unite.Identity.Models;
 using Unite.Identity.Services;
 using Unite.Identity.Web.Configuration.Options;
+using Unite.Identity.Resources;
 
 namespace Unite.Identity.Web.Controllers.Users;
 

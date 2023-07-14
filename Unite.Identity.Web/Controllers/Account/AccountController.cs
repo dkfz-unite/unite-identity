@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Unite.Identity.Data.Entities;
-using Unite.Identity.Models;
 using Unite.Identity.Resources;
 using Unite.Identity.Services;
 using Unite.Identity.Data.Extensions;

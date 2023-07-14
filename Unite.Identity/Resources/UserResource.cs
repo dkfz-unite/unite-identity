@@ -1,7 +1,7 @@
 ﻿using Unite.Identity.Data.Entities;
 using Unite.Identity.Data.Extensions;
 
-namespace Unite.Identity.Models;
+namespace Unite.Identity.Resources;
 
 public class UserResource
 {
@@ -26,9 +26,7 @@ public class UserResource
 
         if (user.Provider != null)
         {
-            Provider = user.Provider.Label != null
-                ? user.Provider.Label
-                : user.Provider.Name;
+            Provider = user.Provider.Label ?? user.Provider.Name;
         }
     }
 }
