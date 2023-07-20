@@ -8,15 +8,15 @@ public class ApiOptions
     {
         get
         {
-            var key = Environment.GetEnvironmentVariable("UNITE_API_KEY");
+            var option = Environment.GetEnvironmentVariable("UNITE_API_KEY");
 
-            if (key == null)
+            if (option == null)
                 throw new ArgumentNullException("'UNITE_API_KEY' environment variable has to be set");
 
-            if (key.Length != 32)
+            if (option.Length != 32)
                 throw new ArgumentOutOfRangeException("'UNITE_API_KEY' environment variable has to be a 32 bit string");
 
-            return Encoding.ASCII.GetBytes(key);
+            return Encoding.ASCII.GetBytes(option);
         }
     }
 }

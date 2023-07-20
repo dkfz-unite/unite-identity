@@ -1,27 +1,25 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Unite.Identity.Data.Entities;
+﻿using Unite.Identity.Data.Entities;
 using Unite.Identity.Data.Services;
 
 namespace Unite.Identity.Services;
 
-public class BaseIdentityService
+public abstract class BaseIdentityService
 {
     protected readonly IdentityDbContext _dbContext;
+    protected readonly UserService _userService;
 
-    public BaseIdentityService(IdentityDbContext dbContext)
+    public BaseIdentityService(IdentityDbContext dbContext, UserService userService)
     {
         _dbContext = dbContext;
+        _userService = userService;
     }
 
-    //TODO: email / login ? db
-    public User GetUser(string email)
+    public User GetUser(string provider, string email, bool isActive)
     {
-        var user = _dbContext.Set<User>()
-            .Include(user => user.UserSessions)
-            .Include(user => user.UserPermissions)
-            .FirstOrDefault(user => user.Email == email);
-
-        return user;
+        return _userService.GetUser(user => 
+            user.Provider.Name == provider && 
+            user.Email == email && 
+            user.IsActive == isActive
+        );
     }
 }
-

@@ -14,6 +14,8 @@ public class ClaimsHelper
 
         claims.Add(new Claim(ClaimTypes.Email, user.Email));
 
+        claims.Add(new Claim(ClaimTypes.AuthenticationMethod, user.Provider.Name));
+
         if (user.IsRoot)
         {
             claims.Add(new Claim(ClaimTypes.Role, "Root"));

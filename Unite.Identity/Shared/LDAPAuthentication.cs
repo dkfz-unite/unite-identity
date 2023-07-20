@@ -1,5 +1,4 @@
-﻿using System;
-using System.DirectoryServices.Protocols;
+﻿using System.DirectoryServices.Protocols;
 using System.Net;
 
 namespace Unite.Identity.Shared
@@ -7,7 +6,7 @@ namespace Unite.Identity.Shared
     public class LDAPAuthentication
     {
         // Connection
-        private LdapConnection? Connection;
+        private LdapConnection Connection;
         private string Server;
         private int? Port;
         private string ServiceUserRNA;
@@ -69,8 +68,38 @@ namespace Unite.Identity.Shared
                 }
             }
 
-            string query = $"(cn={userId})";
-            string[] attributeList = new string[] { "DistinguishedName" };
+            var userEntry = this.ReadUserEntry(userId);
+
+            var userCredentialsValid = false;
+            if (userEntry == null)
+            {
+                return userCredentialsValid;
+            }
+
+            // Relative Distinguished Name
+            var targetRNA = userEntry.DistinguishedName;
+            var targetCredential = new NetworkCredential(targetRNA, userPassword);
+
+            try
+            {
+                this.Connection.Bind(targetCredential);
+
+                userCredentialsValid = true;
+            }
+            catch
+            {
+                // Credential wrong
+            }
+
+            return userCredentialsValid;
+        }
+
+        public SearchResultEntry ReadUserEntry(string userLogin)
+        {
+            bool loginIsEmail = userLogin.Contains("@");
+            string searchEntryMember = loginIsEmail ? "mail" : "cn";
+            string query = $"({searchEntryMember}={userLogin})";
+            string[] attributeList = new string[] { "DistinguishedName", "Mail" };
 
             var searchRequest = new SearchRequest(this.TargetOU, query, this.SearchScope, attributeList);
 
@@ -99,32 +128,17 @@ namespace Unite.Identity.Shared
                 }
             }
 
-            var userCredentialsValid = false;
+
             if (searchResponse.Entries.Count < 1)
             {
                 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
                 {
                     Console.WriteLine($"Found no entries for AD-User");
                 }
-                return userCredentialsValid;
+                return null;
             }
 
-            // Relative Distinguished Name
-            var targetRNA = searchResponse.Entries[0].DistinguishedName;
-            var targetCredential = new NetworkCredential(targetRNA, userPassword);
-
-            try
-            {
-                this.Connection.Bind(targetCredential);
-
-                userCredentialsValid = true;
-            }
-            catch
-            {
-                // Credential wrong
-            }
-
-            return userCredentialsValid;
+            return searchResponse.Entries[0];
         }
     }
 }
