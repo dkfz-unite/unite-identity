@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using Unite.Identity.Constants;
 using Unite.Identity.Data.Entities;
 using Unite.Identity.Data.Extensions;
 
@@ -15,14 +14,7 @@ public class ClaimsHelper
 
         claims.Add(new Claim(ClaimTypes.Email, user.Email));
 
-        if (string.Equals(user.Provider?.Name, Providers.Ldap))
-        {
-            claims.Add(new Claim(ClaimTypes.AuthenticationMethod, "ldap"));
-        }
-        else if (string.Equals(user.Provider?.Name, Providers.Default))
-        {
-            claims.Add(new Claim(ClaimTypes.AuthenticationMethod, "default"));
-        }
+        claims.Add(new Claim(ClaimTypes.AuthenticationMethod, user.Provider.Name));
 
         if (user.IsRoot)
         {

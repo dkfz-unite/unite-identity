@@ -1,8 +1,5 @@
-﻿using System;
-using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
 using Unite.Identity.Data.Entities;
-using Unite.Identity.Data.Entities.Enums;
 using Unite.Identity.Data.Services;
 
 namespace Unite.Identity.Services;

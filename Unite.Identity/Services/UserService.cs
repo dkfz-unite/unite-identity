@@ -10,70 +10,64 @@ namespace Unite.Identity.Services;
 public class UserService
 {
     private readonly IdentityDbContext _dbContext;
+    private readonly ProviderService _providerService;
 
 
-    public UserService(IdentityDbContext dbContext)
+    public UserService(IdentityDbContext dbContext, ProviderService providerService)
     {
         _dbContext = dbContext;
+        _providerService = providerService;
     }
 
 
     public User GetUser(int id)
     {
-        return _dbContext.Set<User>()
-            .Include(user => user.UserPermissions)
-            .FirstOrDefault(user => user.Id == id);
+        return GetUser(user => user.Id == id);
     }
 
     public User GetUser(Expression<Func<User, bool>> predicate)
     {
         return _dbContext.Set<User>()
+            .Include(user => user.Provider)
             .Include(user => user.UserPermissions)
+            .Include(user => user.UserSessions)
             .FirstOrDefault(predicate);
-    }
-
-    public Provider GetProvider(int id)
-    {
-        return _dbContext.Set<Provider>()
-            .FirstOrDefault(provider => provider.Id == id);
     }
 
     public User[] GetUsers()
     {
-        return _dbContext.Set<User>()
-            .Include(user => user.UserPermissions)
-            .ToArray();
+        return GetUsers(user => true);
     }
 
     public User[] GetUsers(Expression<Func<User, bool>> predicate)
     {
         return _dbContext.Set<User>()
-            .Include(user => user.UserPermissions)
             .Include(user => user.Provider)
+            .Include(user => user.UserPermissions)
+            .Include(user => user.UserSessions)
             .Where(predicate)
             .ToArray();
     }
 
-    public User Add(string email, int providerId, Permission[] permissions = null)
+    public User Add(string email, int providerId, bool isActive, bool isRoot, Permission[] permissions = null)
     {
-        var user = GetUser(user => user.Email == email);
-        var provider = GetProvider(providerId);
+        var user = GetUser(user => user.Email == email && user.ProviderId == providerId);
 
-        if (user == null && provider != null)
+        if (user == null)
         {
             user = new User
             {
-                Email = email,
-                IsRoot = false,
-                IsActive = provider.Name != Providers.Default, // Only Unite users need to register
                 ProviderId = providerId,
+                Email = email,
+                IsActive = isActive,
+                IsRoot = isRoot,
                 UserPermissions = GetUserPermissions(permissions),
             };
 
             _dbContext.Add(user);
             _dbContext.SaveChanges();
 
-            return user;
+            return GetUser(user.Id);
         }
         else
         {
@@ -93,7 +87,7 @@ public class UserService
             _dbContext.Update(user);
             _dbContext.SaveChanges();
 
-            return user;
+            return GetUser(user.Id);
         }
         else
         {

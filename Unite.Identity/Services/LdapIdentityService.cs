@@ -1,60 +1,37 @@
-﻿using Unite.Identity.Constants;
+using Unite.Identity.Constants;
 using Unite.Identity.Data.Entities;
 using Unite.Identity.Data.Services;
-using Unite.Identity.Data.Services.Configuration.Options;
-using Unite.Identity.Shared;
+using Unite.Identity.Services.Ldap;
 
 namespace Unite.Identity.Services;
 
 public class LdapIdentityService : BaseIdentityService, IIdentityService
 {
-    private readonly LDAPAuthentication _ldapAuth;
+    private readonly LdapService _ldapService;
 
-    public LdapIdentityService(
-        IdentityDbContext dbContext,
-        ILdapOptions options) : base(dbContext)
+    public LdapIdentityService(IdentityDbContext dbContext, UserService userService, LdapService ldapService) : base(dbContext, userService)
     {
-        _ldapAuth = new LDAPAuthentication(options.Server, options.ServiceUserRNA, options.ServiceUserPassword, options.UserTargetOU, options.Port);
+        _ldapService = ldapService;
     }
 
-    public User LoginUser(string userIdentifier, string userPass)
+    public User LoginUser(string login, string password)
     {
-        string userEmail = userIdentifier.Contains("@")
-            ? userIdentifier
-            : GetUserEmail(userIdentifier);
-        if (userEmail == null)
+        var ldapUser = _ldapService.FindUser(login);
+
+        if (ldapUser == null)
         {
             return null;
         }
 
-        var user = GetUser(userEmail, Providers.Ldap);
-        if (user == null)
+        var uniteUser = GetUser(Providers.Ldap, ldapUser.Email, true);
+
+        if (uniteUser == null)
         {
             return null;
         }
 
-        var userCredentialsValid = _ldapAuth.UserCredentialsValid(userIdentifier, userPass);
-        if (!userCredentialsValid)
-        {
-            return null;
-        }
+        var authenticated = _ldapService.AuthenticateUser(ldapUser.Login, password);
 
-        return user;
-    }
-
-    private string GetUserEmail(string userIdentifier)
-    {
-        string userEmail = null;
-        var result = _ldapAuth.ReadUserEntry(userIdentifier);
-        if (result != null)
-        {
-            try
-            {
-                userEmail = result.Attributes["mail"][0].ToString();
-            }
-            catch (Exception ex) { }
-        }
-
-        return userEmail;
+        return authenticated ? uniteUser : null;
     }
 }

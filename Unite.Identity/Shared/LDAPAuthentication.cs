@@ -1,5 +1,4 @@
-﻿using System;
-using System.DirectoryServices.Protocols;
+﻿using System.DirectoryServices.Protocols;
 using System.Net;
 
 namespace Unite.Identity.Shared
@@ -7,7 +6,7 @@ namespace Unite.Identity.Shared
     public class LDAPAuthentication
     {
         // Connection
-        private LdapConnection? Connection;
+        private LdapConnection Connection;
         private string Server;
         private int? Port;
         private string ServiceUserRNA;

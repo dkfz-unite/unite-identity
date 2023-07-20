@@ -1,13 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Unite.Identity.Data.Services;
-using Unite.Identity.Data.Services.Configuration.Options;
-using Unite.Identity.Services;
-using Unite.Identity.Web.Configuration.Options;
-using Unite.Identity.Web.Configuration.Extensions;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using FluentValidation.AspNetCore;
+﻿using Unite.Identity.Web.Configuration.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
