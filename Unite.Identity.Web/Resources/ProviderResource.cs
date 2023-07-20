@@ -8,7 +8,6 @@ public class ProviderResource
     public string Name { get; set; }
     public string Label { get; set; }
     public int? Priority { get; set; }
-    public string Title => Label ?? Name;
 
 
     public ProviderResource(Provider provider)

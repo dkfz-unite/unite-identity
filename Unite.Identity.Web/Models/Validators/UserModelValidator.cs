@@ -24,17 +24,3 @@ public class EditUserModelValidator : AbstractValidator<EditUserModel>
             .NotEmpty().WithMessage("Should not be empty");
     }
 }
-
-public class CheckUserModelValidator : AbstractValidator<CheckUserModel>
-{
-    public CheckUserModelValidator()
-    {
-        RuleFor(model => model.Email)
-            .NotEmpty().WithMessage("Should not be empty")
-            .EmailAddress().WithMessage("Should be an email address")
-            .MaximumLength(100).WithMessage("Maximum length is 100");
-
-        RuleFor(model => model.ProviderId)
-            .NotEmpty().WithMessage("Should not be empty");
-    }
-}

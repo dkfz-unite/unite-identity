@@ -6,9 +6,9 @@ Creates new account.
 ### Body - application/json
 ```jsonc
 {
-    "Email": "test@mail.com",
-    "Password": "Long-Pa55w0rd",
-    "PasswordRepeat": "Long-Pa55w0rd",
+    "email": "test@mail.com",
+    "password": "Long-Pa55w0rd",
+    "passwordRepeat": "Long-Pa55w0rd",
 }
 ```
 
@@ -36,10 +36,10 @@ Loads account data.
 ### Resources
 ```jsonc
 {
-    "Email": "test@mail.com", // email
-    "Provider": "Default", // identity provider
-    "Permissions": ["Data.Read"], // permissions
-    "Devices": [] // active devices
+    "email": "test@mail.com", // email
+    "provider": "Default", // identity provider
+    "permissions": ["Data.Read"], // permissions
+    "devices": [] // active devices
 }
 ```
 
@@ -53,9 +53,9 @@ Changes account password.
 ### Body - application/json
 ```jsonc
 {
-    "OldPassword": "Long-Pa55w0rd", // old password
-    "NewPassword": "Long-Pa55w0rd", // new password
-    "NewPasswordRepeat": "Long-Pa55w0rd", // new password repeat
+    "oldPassword": "Long-Pa55w0rd", // old password
+    "newPassword": "Long-Pa55w0rd", // new password
+    "newPasswordRepeat": "Long-Pa55w0rd", // new password repeat
 }
 ```
 
