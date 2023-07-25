@@ -28,7 +28,7 @@
         "UNITE_LDAP_HOST": "",
         "UNITE_LDAP_PORT": "",
         "UNITE_LDAP_TARGET_OU": "",
-        "UNITE_LDAP_SERVICE_LOGIN": "",
+        "UNITE_LDAP_SERVICE_USER": "",
         "UNITE_LDAP_SERVICE_PASSWORD": ""
       }
     },
@@ -53,7 +53,7 @@
         "UNITE_LDAP_HOST": "",
         "UNITE_LDAP_PORT": "",
         "UNITE_LDAP_TARGET_OU": "",
-        "UNITE_LDAP_SERVICE_LOGIN": "",
+        "UNITE_LDAP_SERVICE_USER": "",
         "UNITE_LDAP_SERVICE_PASSWORD": ""
       }
     }
