@@ -82,10 +82,10 @@ public class LdapProviderOptions : ILdapOptions
     {
         get
         {
-            var option = Environment.GetEnvironmentVariable("UNITE_LDAP_USER_TARGET_OU");
+            var option = Environment.GetEnvironmentVariable("UNITE_LDAP_TARGET_OU");
 
             if (Active && string.IsNullOrWhiteSpace(option))
-                throw new ArgumentException("'UNITE_LDAP_USER_TARGET_OU' environment variable has to be set");
+                throw new ArgumentException("'UNITE_LDAP_TARGET_OU' environment variable has to be set");
 
             return option?.Trim();
         }
@@ -95,10 +95,10 @@ public class LdapProviderOptions : ILdapOptions
     {
         get
         {
-            var option = Environment.GetEnvironmentVariable("UNITE_LDAP_SERVICE_USER_LOGIN");
+            var option = Environment.GetEnvironmentVariable("UNITE_LDAP_SERVICE_USER");
 
             if (Active && string.IsNullOrWhiteSpace(option))
-                throw new ArgumentException("'UNITE_LDAP_SERVICE_USER_LOGIN' environment variable has to be set");
+                throw new ArgumentException("'UNITE_LDAP_SERVICE_USER' environment variable has to be set");
 
             return option?.Trim();
         }
@@ -108,10 +108,10 @@ public class LdapProviderOptions : ILdapOptions
     {
         get
         {
-            var option = Environment.GetEnvironmentVariable("UNITE_LDAP_SERVICE_USER_PASSWORD");
+            var option = Environment.GetEnvironmentVariable("UNITE_LDAP_SERVICE_PASSWORD");
 
             if (Active && string.IsNullOrWhiteSpace(option))
-                throw new ArgumentException("'UNITE_LDAP_SERVICE_USER_PASSWORD' environment variable has to be set");
+                throw new ArgumentException("'UNITE_LDAP_SERVICE_PASSWORD' environment variable has to be set");
 
             return option;
         }
