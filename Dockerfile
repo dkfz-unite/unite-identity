@@ -16,11 +16,11 @@ RUN dotnet restore "Unite.Identity.Web/Unite.Identity.Web.csproj"
 FROM restore as build
 COPY . .
 WORKDIR "/src/Unite.Identity.Web"
-RUN dotnet build "Unite.Identity.Web.csproj" -c Release
+RUN dotnet build --no-restore "Unite.Identity.Web.csproj" -c Release
 #--no-restore
 
 FROM build AS publish
-RUN dotnet publish "Unite.Identity.Web.csproj" -c Release -o /app/publish
+RUN dotnet publish --no-restore "Unite.Identity.Web.csproj" -c Release -o /app/publish
 #--no-restore
 
 FROM base AS final
