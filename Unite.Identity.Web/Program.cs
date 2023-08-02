@@ -11,8 +11,6 @@ builder.Services.AddControllers();
 
 builder.Services.AddServices();
 
-builder.Services.AddCors();
-
 builder.Services.AddAuthentication(options => options.AddJwtAuthenticationOptions())
                 .AddJwtBearer(options => options.AddJwtBearerOptions());
 
@@ -31,13 +29,6 @@ app.UseHsts();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseCors(builder => builder
-    .AllowAnyMethod()
-    .AllowAnyHeader()
-    .SetIsOriginAllowed(origin => true)
-    .AllowCredentials()
-);
 
 app.MapControllers();
 
