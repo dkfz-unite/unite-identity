@@ -5,7 +5,7 @@ using Unite.Identity.Web.Configuration.Options;
 
 namespace Unite.Identity.Web.Controllers;
 
-[Route($"api/realm/default")]
+[Route("api/realm/default")]
 public class IdentityDefaultController : IdentityController<DefaultIdentityService>
 {
     protected override string Provider => Providers.Default;
