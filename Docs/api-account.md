@@ -6,9 +6,9 @@ Creates new account.
 ### Body - application/json
 ```jsonc
 {
-    "email": "test@mail.com",
-    "password": "Long-Pa55w0rd",
-    "passwordRepeat": "Long-Pa55w0rd",
+    "email": "test@mail.com", // email (required, unique, max length 256)
+    "password": "Long-Pa55w0rd", // password (required)
+    "passwordRepeat": "Long-Pa55w0rd", // password repeat (required)
 }
 ```
 
@@ -19,8 +19,8 @@ Creates new account.
 - Passwords should match
 
 ### Responses
-- `400` - invalid request data
 - `200` - successful request
+- `400` - invalid request data
 
 
 ## GET: [api/account](http://localhost:5004/api/account)
@@ -30,8 +30,9 @@ Loads account data.
 - `Authorization: Bearer [token]` - JWT token
 
 ### Responses
-- `403` - anouthorized
 - `200` - successful request
+- `401` - missing token
+- `403` - invalid token
 
 ### Resources
 ```jsonc
@@ -53,9 +54,9 @@ Changes account password.
 ### Body - application/json
 ```jsonc
 {
-    "oldPassword": "Long-Pa55w0rd", // old password
-    "newPassword": "Long-Pa55w0rd", // new password
-    "newPasswordRepeat": "Long-Pa55w0rd", // new password repeat
+    "oldPassword": "Long-Pa55w0rd", // old password (required)
+    "newPassword": "Long-Pa55w0rd", // new password (required)
+    "newPasswordRepeat": "Long-Pa55w0rd", // new password repeat (required)
 }
 ```
 
@@ -66,6 +67,7 @@ Changes account password.
 - Passwords should match
 
 ### Responses
-- `400` - invalid request data
-- `403` - anouthorized
 - `200` - successful request
+- `400` - invalid request data
+- `401` - missing token
+- `403` - invalid token

@@ -1,14 +1,14 @@
 # Users API
+Api is protected and requires the following headers to be set:
+- `Authorization: Bearer [token]` - JWT token (Roles: `Admin`)
 
 ## GET: [api/users](http://localhost:5004/api/users)
-Returns list of available users.
-
-### Headers
-- `Authorization: Bearer [token]` - JWT token
+Returns list of existing users.
 
 ### Responses
-- `403` - anouthorized
 - `200` - successful request
+- `401` - missing token
+- `403` - invalid token
 
 ### Resources
 - [User](#user)[] - list of users
@@ -17,27 +17,24 @@ Returns list of available users.
 ## GET: [api/user](http://localhost:5004/api/user)
 Checks if user exists.
 
-### Headers
-- `Authorization: Bearer [token]` - JWT token
-
 ### Parameters
 - `provider`- identity provider id
 - `email` - user email
 
 ### Responses
-- `403` - anouthorized
 - `200` - successful request
+- `401` - missing token
+- `403` - invalid token
 
 
 ## GET: [api/user/{id}](http://localhost:5004/api/user/1)
-Returns user by id.
-
-### Headers
-- `Authorization: Bearer [token]` - JWT token
+Gets user data.
 
 ### Responses
-- `403` - anouthorized
 - `200` - successful request
+- `401` - missing token
+- `403` - invalid token
+- `404` - user not found
 
 ### Resources
 - [User](#user) - user
@@ -45,9 +42,6 @@ Returns user by id.
 
 ## POST: [api/user](http://localhost:5004/api/user)
 Creates new user.
-
-### Headers
-- `Authorization: Bearer [token]` - JWT token
 
 ### Body - application/json
 ```jsonc
@@ -59,18 +53,17 @@ Creates new user.
 ```
 
 ### Responses
-- `403` - anouthorized
 - `200` - successful request
+- `400` - invalid request data
+- `401` - missing token
+- `403` - invalid token
 
 ### Resources
 - [User](#user) - created user
 
 
 ## PUT: [api/user/{id}](http://localhost:5004/api/user/1)
-Updates existing user.
-
-### Headers
-- `Authorization: Bearer [token]` - JWT token
+Updates user.
 
 ### Body - application/json
 ```jsonc
@@ -81,22 +74,27 @@ Updates existing user.
 ```
 
 ### Responses
-- `403` - anouthorized
 - `200` - successful request
+- `400` - invalid request data
+- `401` - missing token
+- `403` - invalid token
+- `404` - user not found
 
 ### Resources
 - [User](#user) - updated user
 
 
 ## DELETE: [api/user/{id}](http://localhost:5004/api/user/1)
-Deletes existing user.
+Deletes user.
 
 ### Headers
 - `Authorization: Bearer [token]` - JWT token
 
 ### Responses
-- `403` - anouthorized
 - `200` - successful request
+- `401` - missing token
+- `403` - invalid token
+- `404` - user not found
 
 
 ## Models

@@ -20,17 +20,14 @@ public class AddWorkerTokenModelValidator : AbstractValidator<AddWorkerTokenMode
             .Must(HaveExpiryTime).WithMessage("Should have expiry time set");
 
         RuleFor(model => model.ExpiryMinutes)
-            .Empty().When(model => model.ExpiryHours != null || model.ExpiryDays != null).WithMessage("Expiry time is already set")
             .GreaterThanOrEqualTo(1).WithMessage("Should be greater than or equal to 1")
             .LessThanOrEqualTo(59).WithMessage("Should be less than or equal to 59");
 
         RuleFor(model => model.ExpiryHours)
-            .Empty().When(model => model.ExpiryMinutes != null || model.ExpiryDays != null).WithMessage("Expiry time is already set")
             .GreaterThanOrEqualTo(1).WithMessage("Should be greater than or equal to 1")
             .LessThanOrEqualTo(23).WithMessage("Should be less than or equal to 23");
 
         RuleFor(model => model.ExpiryDays)
-            .Empty().When(model => model.ExpiryMinutes != null || model.ExpiryHours != null).WithMessage("Expiry time is already set")
             .GreaterThanOrEqualTo(1).WithMessage("Should be greater than or equal to 1")
             .LessThanOrEqualTo(365).WithMessage("Should be less than or equal to 365");
     }

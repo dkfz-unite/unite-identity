@@ -143,9 +143,15 @@ public class WorkerController : Controller
 
     private static DateTime GetTokenExpiryDate(AddWorkerTokenModel model)
     {
-        return model.ExpiryMinutes.HasValue ? DateTime.UtcNow.AddMinutes(model.ExpiryMinutes.Value)
-             : model.ExpiryHours.HasValue ? DateTime.UtcNow.AddHours(model.ExpiryHours.Value)
-             : model.ExpiryDays.HasValue ? DateTime.UtcNow.AddDays(model.ExpiryDays.Value)
-             : DateTime.UtcNow;
+        var expiryDate = DateTime.UtcNow;
+
+        if (model.ExpiryMinutes.HasValue)
+            _ = expiryDate.AddMinutes(model.ExpiryMinutes.Value);
+        else if (model.ExpiryHours.HasValue)
+            _ = expiryDate.AddHours(model.ExpiryHours.Value);
+        else if (model.ExpiryDays.HasValue)
+            _ = expiryDate.AddDays(model.ExpiryDays.Value);
+
+        return expiryDate;
     }
 }

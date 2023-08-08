@@ -5,6 +5,7 @@ Consists of the following APIs:
 - [Account API](api-account.md) - Account management REST API.
 - [Users API](api-users.md) - Users management REST API.
 - [Providers API](api-providers.md) - Identity providers management REST API.
+- [Workers API](api-workers.md) - Workers management REST API.
 
 
 ## GET: [api](http://localhost:5004/api)
