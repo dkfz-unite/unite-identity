@@ -10,13 +10,10 @@ namespace Unite.Identity.Services;
 public class UserService
 {
     private readonly IdentityDbContext _dbContext;
-    private readonly ProviderService _providerService;
 
-
-    public UserService(IdentityDbContext dbContext, ProviderService providerService)
+    public UserService(IdentityDbContext dbContext)
     {
         _dbContext = dbContext;
-        _providerService = providerService;
     }
 
 

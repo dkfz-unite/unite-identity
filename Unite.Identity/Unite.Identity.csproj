@@ -6,6 +6,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.DirectoryServices.Protocols" Version="7.0.0" />
-    <PackageReference Include="Unite.Identity.Data" Version="2.3.0" />
+    <PackageReference Include="Unite.Identity.Data" Version="2.4.0" />
   </ItemGroup>
 </Project>

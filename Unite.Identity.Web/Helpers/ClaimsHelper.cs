@@ -34,6 +34,25 @@ public class ClaimsHelper
         return identity;
     }
 
+    public static ClaimsIdentity GetIdentity(Worker worker)
+    {
+        var claims = new List<Claim>();
+
+        claims.Add(new Claim(ClaimTypes.Name, worker.Name));
+
+        if (worker.WorkerPermissions != null)
+        {
+            foreach (var workerPermission in worker.WorkerPermissions)
+            {
+                claims.Add(new Claim(PermissionClaimType, workerPermission.PermissionId.ToDefinitionString()));
+            }
+        }
+
+        var identity = new ClaimsIdentity(claims);
+
+        return identity;
+    }
+
     public static string GetValue(IEnumerable<Claim> claims, string name)
     {
         return claims.FirstOrDefault(claim => claim.Type == name)?.Value;

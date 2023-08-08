@@ -8,10 +8,10 @@ public class TokenHelper
 {
     private const int TOKEN_EXPIRY_MINUTES = 15;
 
-    private static readonly JwtSecurityTokenHandler _tokenHandler = new JwtSecurityTokenHandler();
+    private static readonly JwtSecurityTokenHandler _tokenHandler = new();
 
 
-    public static string GenerateAuthorizationToken(ClaimsIdentity identity, byte[] key)
+    public static string GenerateAuthorizationToken(ClaimsIdentity identity, byte[] key, DateTime? expires = null)
     {
         var securityKey = new SymmetricSecurityKey(key);
         var securityAlgorythm = SecurityAlgorithms.HmacSha256Signature;
@@ -20,7 +20,7 @@ public class TokenHelper
         var descriptor = new SecurityTokenDescriptor
         {
             Subject = identity,
-            Expires = DateTime.UtcNow.AddMinutes(TOKEN_EXPIRY_MINUTES),
+            Expires = expires ?? DateTime.UtcNow.AddMinutes(TOKEN_EXPIRY_MINUTES),
             SigningCredentials = credentials
         };
 

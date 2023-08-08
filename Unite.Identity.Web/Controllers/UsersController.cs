@@ -39,4 +39,3 @@ public class UsersController : Controller
         return Json(users);
     }
 }
-

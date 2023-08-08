@@ -20,18 +20,27 @@ public class UserController : Controller
         _providerService = providerService;
         _userService = userService;
     }
+    
 
     [HttpGet("")]
     public IActionResult Check([FromQuery]string provider, [FromQuery]string email)
     {
+        if (string.IsNullOrWhiteSpace(provider))
+            return BadRequest("Provider is required");
+
+        if (string.IsNullOrWhiteSpace(email))
+            return BadRequest("Email is required");
+
+        var providerNormalized = provider.Trim().ToLower();
+        
+        var emailNormalized = email.Trim().ToLower();
+
         var user = _userService.GetUser(user =>
-            user.Provider.Name == provider &&
-            user.Email == email
+            user.Provider.Name == providerNormalized &&
+            user.Email == emailNormalized
         );
 
-        var available = user == null;
-
-        return Json(available);
+        return Json(user == null);
     }
 
     [HttpGet("{id}")]
