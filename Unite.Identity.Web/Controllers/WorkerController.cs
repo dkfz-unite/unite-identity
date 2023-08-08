@@ -146,11 +146,11 @@ public class WorkerController : Controller
         var expiryDate = DateTime.UtcNow;
 
         if (model.ExpiryMinutes.HasValue)
-            _ = expiryDate.AddMinutes(model.ExpiryMinutes.Value);
+            expiryDate = expiryDate.AddMinutes(model.ExpiryMinutes.Value);
         else if (model.ExpiryHours.HasValue)
-            _ = expiryDate.AddHours(model.ExpiryHours.Value);
+            expiryDate = expiryDate.AddHours(model.ExpiryHours.Value);
         else if (model.ExpiryDays.HasValue)
-            _ = expiryDate.AddDays(model.ExpiryDays.Value);
+            expiryDate = expiryDate.AddDays(model.ExpiryDays.Value);
 
         return expiryDate;
     }
