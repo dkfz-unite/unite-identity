@@ -50,7 +50,7 @@ public class WorkerController : Controller
     }
 
     [HttpPost("")]
-    public IActionResult Add(AddWorkerModel model)
+    public IActionResult Add([FromBody]AddWorkerModel model)
     {
         var worker = _workerService.Add(model.Name, model.Description);
 
@@ -61,7 +61,7 @@ public class WorkerController : Controller
     }
 
     [HttpPut("{id}")]
-    public IActionResult Update(int id, AddWorkerModel model)
+    public IActionResult Update(int id, [FromBody]AddWorkerModel model)
     {
         var worker = _workerService.Get(id);
 
@@ -100,7 +100,7 @@ public class WorkerController : Controller
     }
 
     [HttpPost("{id}/token")]
-    public IActionResult AddToken(int id, AddWorkerTokenModel model)
+    public IActionResult AddToken(int id, [FromBody]AddWorkerTokenModel model)
     {
         var worker = _workerService.Get(id);
 
@@ -119,7 +119,7 @@ public class WorkerController : Controller
     }
 
     [HttpPut("{id}/token")]
-    public IActionResult UpdateToken(int id, AddWorkerTokenModel model)
+    public IActionResult UpdateToken(int id, [FromBody]AddWorkerTokenModel model)
     {
         var worker = _workerService.Get(id);
 
