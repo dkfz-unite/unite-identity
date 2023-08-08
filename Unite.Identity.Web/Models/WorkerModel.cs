@@ -1,3 +1,5 @@
+using Unite.Identity.Data.Entities.Enums;
+
 namespace Unite.Identity.Web.Models;
 
 public class AddWorkerModel
@@ -7,6 +9,7 @@ public class AddWorkerModel
 
     public string Name { get => _name?.Trim().ToLower(); set => _name = value; }
     public string Description { get => _description?.Trim(); set => _description = value; }
+    public Permission[] Permissions { get; set; }
 }
 
 public class AddWorkerTokenModel

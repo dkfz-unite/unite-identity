@@ -52,7 +52,7 @@ public class WorkerController : Controller
     [HttpPost("")]
     public IActionResult Add([FromBody]AddWorkerModel model)
     {
-        var worker = _workerService.Add(model.Name, model.Description);
+        var worker = _workerService.Add(model.Name, model.Description, permissions: model.Permissions);
 
         if (worker == null)
             return BadRequest("Worker with the same name already exists");
