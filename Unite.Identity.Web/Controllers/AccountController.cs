@@ -5,10 +5,12 @@ using Unite.Identity.Web.Resources;
 using Unite.Identity.Services;
 using Unite.Identity.Web.Helpers;
 using Unite.Identity.Web.Models;
+using Unite.Identity.Web.Configuration.Constants;
 
 namespace Unite.Identity.Web.Controllers;
 
 [Route("api/account")]
+[Authorize(Policy = Policies.User)]
 public class AccountController: Controller
 {
     private readonly AccountService _accountService;
@@ -25,7 +27,6 @@ public class AccountController: Controller
 
 
     [HttpGet("")]
-    [Authorize]
     public IActionResult GetAccount()
     {
         var provider = ClaimsHelper.GetValue(User.Claims, ClaimTypes.AuthenticationMethod);
@@ -40,6 +41,7 @@ public class AccountController: Controller
     }
 
     [HttpPost("")]
+    [AllowAnonymous]
     public IActionResult CreateAccount([FromBody]CreateAccountModel model)
     {
         var user = _accountService.CreateAccount(model.Email, model.Password);
@@ -53,7 +55,6 @@ public class AccountController: Controller
     }
 
     [HttpPut("password")]
-    [Authorize]
     public IActionResult ChangePassword([FromBody]ChangePasswordModel model)
     {
         var email = ClaimsHelper.GetValue(User.Claims, ClaimTypes.Email);

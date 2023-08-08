@@ -82,21 +82,22 @@ public class WorkerService
 
     public Worker Update(int id, Worker model)
     {
-        var entity = Get(entity => entity.Id == id && entity.Name != model.Name);
+        var entity = Get(entity => entity.Id == id);
 
-        if (entity != null)
-        {
-            Map(model, ref entity);
-
-            _dbContext.Update(entity);
-            _dbContext.SaveChanges();
-
-            return Get(entity.Id);
-        }
-        else
-        {
+        if (entity == null)
             return null;
-        }
+
+        var exists = entity.Name != model.Name && _dbContext.Set<Worker>().Any(entity => entity.Name == model.Name);
+        
+        if (exists)
+            return null;
+
+        Map(model, ref entity);
+
+        _dbContext.Update(entity);
+        _dbContext.SaveChanges();
+
+        return Get(entity.Id);
     }
 
     public bool Delete(int id)

@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Unite.Identity.Data.Entities;
 using Unite.Identity.Data.Extensions;
+using Unite.Identity.Web.Configuration.Constants;
 
 namespace Unite.Identity.Web.Helpers;
 
@@ -12,8 +13,8 @@ public class ClaimsHelper
     {
         var claims = new List<Claim>();
 
+        claims.Add(new Claim(ClaimTypes.Actor, Actors.User));
         claims.Add(new Claim(ClaimTypes.Email, user.Email));
-
         claims.Add(new Claim(ClaimTypes.AuthenticationMethod, user.Provider.Name));
 
         if (user.IsRoot)
@@ -38,6 +39,7 @@ public class ClaimsHelper
     {
         var claims = new List<Claim>();
 
+        claims.Add(new Claim(ClaimTypes.Actor, Actors.Worker));
         claims.Add(new Claim(ClaimTypes.Name, worker.Name));
 
         if (worker.WorkerPermissions != null)

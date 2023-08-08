@@ -115,7 +115,7 @@ public class WorkerController : Controller
 
         _workerService.Update(id, worker with { Token = token, TokenExpiryDate = tokenExpiryDate });
         
-        return Json(new { worker.Token, worker.TokenExpiryDate });
+        return Ok(token);
     }
 
     [HttpPut("{id}/token")]
@@ -137,7 +137,7 @@ public class WorkerController : Controller
 
         _workerService.Update(id, worker with { Token = token, TokenExpiryDate = tokenExpiryDate });
 
-        return Json(new { worker.Token, worker.TokenExpiryDate });
+        return Ok(token);
     }
 
 
