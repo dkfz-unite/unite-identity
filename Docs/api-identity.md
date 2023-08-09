@@ -17,8 +17,8 @@ Logs user in.
 ```
 
 ### Responses
-- `200` - successful request
-- `400` - invalid request data
+- `200` - request was processed successfully
+- `400` - request data didn't pass validation
 
 ### Resources
 - `unite_token` - JWT token as response body
@@ -32,9 +32,8 @@ Logs user out.
 - `Authorization: Bearer [token]` - JWT token
 
 ### Responses
-- `200` - successful request
-- `401` - missing token
-- `403` - invalid token
+- `200` - request was processed successfully
+- `401` - missing JWT token
 
 
 ## POST: [api/realm/[provider]/token](http://localhost:5004/api/realm/default/token)
@@ -44,9 +43,9 @@ Refreshes JWT token.
 - `unite_session` - session cookie
 
 ### Responses
-- `200` - successful request
+- `200` - request was processed successfully
 - `400` - invalid session cookie
-- `403` - missing session cookie
+- `401` - missing session cookie
 
 
 ### Resources

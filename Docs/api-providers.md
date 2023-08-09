@@ -4,7 +4,7 @@
 Returns list of available identity providers.
 
 ### Responses
-- `200` - successful request
+- `200` - request was processed successfully
 
 ### Resources
 - [Provider](#provider)[] - list of identity providers

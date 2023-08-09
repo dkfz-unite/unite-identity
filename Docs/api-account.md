@@ -19,8 +19,8 @@ Creates new account.
 - Passwords should match
 
 ### Responses
-- `200` - successful request
-- `400` - invalid request data
+- `200` - request was processed successfully
+- `400` - request data didn't pass validation
 
 
 ## GET: [api/account](http://localhost:5004/api/account)
@@ -30,9 +30,9 @@ Loads account data.
 - `Authorization: Bearer [token]` - JWT token
 
 ### Responses
-- `200` - successful request
-- `401` - missing token
-- `403` - invalid token
+- `200` - request was processed successfully
+- `401` - missing JWT token
+- `403` - missing required permissions
 
 ### Resources
 ```jsonc
@@ -67,7 +67,7 @@ Changes account password.
 - Passwords should match
 
 ### Responses
-- `200` - successful request
-- `400` - invalid request data
-- `401` - missing token
-- `403` - invalid token
+- `200` - request was processed successfully
+- `400` - request data didn't pass validation
+- `401` - missing JWT token
+- `403` - missing required permissions

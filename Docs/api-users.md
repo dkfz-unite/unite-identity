@@ -1,14 +1,14 @@
 # Users API
 Api is protected and requires the following headers to be set:
-- `Authorization: Bearer [token]` - JWT token (Roles: `Admin`)
+- `Authorization: Bearer [token]` - JWT tokenwith `Root` role
 
 ## GET: [api/users](http://localhost:5004/api/users)
 Returns list of existing users.
 
 ### Responses
-- `200` - successful request
-- `401` - missing token
-- `403` - invalid token
+- `200` - request was processed successfully
+- `401` - missing JWT token
+- `403` - missing required permissions
 
 ### Resources
 - [User](#user)[] - list of users
@@ -22,19 +22,19 @@ Checks if user exists.
 - `email` - user email
 
 ### Responses
-- `200` - successful request
-- `401` - missing token
-- `403` - invalid token
+- `200` - request was processed successfully
+- `401` - missing JWT token
+- `403` - missing required permissions
 
 
 ## GET: [api/user/{id}](http://localhost:5004/api/user/1)
 Gets user data.
 
 ### Responses
-- `200` - successful request
-- `401` - missing token
-- `403` - invalid token
-- `404` - user not found
+- `200` - request was processed successfully
+- `401` - missing JWT token
+- `403` - missing required permissions
+- `404` - user wasn't found
 
 ### Resources
 - [User](#user) - user
@@ -53,10 +53,10 @@ Creates new user.
 ```
 
 ### Responses
-- `200` - successful request
-- `400` - invalid request data
-- `401` - missing token
-- `403` - invalid token
+- `200` - request was processed successfully
+- `400` - request data didn't pass validation
+- `401` - missing JWT token
+- `403` - missing required permissions
 
 ### Resources
 - [User](#user) - created user
@@ -74,11 +74,11 @@ Updates user.
 ```
 
 ### Responses
-- `200` - successful request
-- `400` - invalid request data
-- `401` - missing token
-- `403` - invalid token
-- `404` - user not found
+- `200` - request was processed successfully
+- `400` - request data didn't pass validation
+- `401` - missing JWT token
+- `403` - missing required permissions
+- `404` - user wasn't found
 
 ### Resources
 - [User](#user) - updated user
@@ -91,10 +91,10 @@ Deletes user.
 - `Authorization: Bearer [token]` - JWT token
 
 ### Responses
-- `200` - successful request
-- `401` - missing token
-- `403` - invalid token
-- `404` - user not found
+- `200` - request was processed successfully
+- `401` - missing JWT token
+- `403` - missing required permissions
+- `404` - user wasn't found
 
 
 ## Models

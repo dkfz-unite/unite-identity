@@ -1,14 +1,14 @@
 # Workers API
 Api is protected and requires the following headers to be set:
-- `Authorization: Bearer [token]` - JWT token (Roles: `Admin`)
+- `Authorization: Bearer [token]` - JWT token with `Root` role
 
 ## GET: [api/workers](http://localhost:5004/api/workers)
 Returns list of existing workers.
 
 ### Responses
-- `200` - successful request
-- `401` - missing token
-- `403` - invalid token
+- `200` - request was processed successfully
+- `401` - missing JWT token
+- `403` - missing required permissions
 
 ### Resources
 - [Worker](#worker)[] - list of workers
@@ -21,19 +21,19 @@ Checks if worker exists.
 - `name` - worker name
 
 ### Responses
-- `200` - successful request
-- `401` - missing token
-- `403` - invalid token
+- `200` - request was processed successfully
+- `401` - missing JWT token
+- `403` - missing required permissions
 
 
 ## GET: [api/worker/{id}](http://localhost:5004/api/worker/1)
 Returns worker by id.
 
 ### Responses
-- `200` - successful request
-- `401` - missing token
-- `403` - invalid token
-- `404` - worker not found
+- `200` - request was processed successfully
+- `401` - missing JWT token
+- `403` - missing required permissions
+- `404` - worker wasn't found
 
 ### Resources
 - [Worker](#worker) - worker
@@ -52,10 +52,10 @@ Creates new worker.
 ```
 
 ### Responses
-- `200` - successful request
-- `400` - invalid request data
-- `401` - missing token
-- `403` - invalid token
+- `200` - request was processed successfully
+- `400` - request data didn't pass validation
+- `401` - missing JWT token
+- `403` - missing required permissions
 
 
 ## PUT: [api/worker/{id}](http://localhost:5004/api/worker/1)
@@ -71,31 +71,31 @@ Updates worker.
 ```
 
 ### Responses
-- `200` - successful request
-- `400` - invalid request data
-- `401` - missing token
-- `403` - invalid token
-- `404` - worker not found
+- `200` - request was processed successfully
+- `400` - request data didn't pass validation
+- `401` - missing JWT token
+- `403` - missing required permissions
+- `404` - worker wasn't found
 
 
 ## DELETE: [api/worker/{id}](http://localhost:5004/api/worker/1)
 Deletes worker.
 
 ### Responses
-- `200` - successful request
-- `401` - missing token
-- `403` - invalid token
-- `404` - worker not found
+- `200` - request was processed successfully
+- `401` - missing JWT token
+- `403` - missing required permissions
+- `404` - worker wasn't found
 
 
 ## GET: [api/worker/{id}/token](http://localhost:5004/api/worker/1/token)
 Returns worker token.
 
 ### Responses
-- `200` - successful request
-- `401` - missing token
-- `403` - invalid token
-- `404` - worker not found
+- `200` - request was processed successfully
+- `401` - missing JWT token
+- `403` - missing required permissions
+- `404` - worker wasn't found
 
 ### Resources
 - `unite_token` - JWT token as response body
@@ -117,10 +117,11 @@ Creates new worker token.
 ```
 
 ### Responses
-- `200` - successful request
-- `401` - missing token
-- `403` - invalid token
-- `404` - worker not found
+- `200` - request was processed successfully
+- `400` - request data didn't pass validation
+- `401` - missing JWT token
+- `403` - missing required permissions
+- `404` - worker wasn't found
 
 ### Resources
 - `unite_token` - JWT token as response body
@@ -142,11 +143,11 @@ Updates worker token.
 ```
 
 ### Responses
-- `200` - successful request
-- `400` - invalid request data
-- `401` - missing token
-- `403` - invalid token
-- `404` - worker not found
+- `200` - request was processed successfully
+- `400` - request data didn't pass validation
+- `401` - missing JWT token
+- `403` - missing required permissions
+- `404` - worker wasn't found
 
 
 ## Models
