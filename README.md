@@ -14,7 +14,7 @@ Identity service is written in ASP.NET (.NET 7)
 ## Access
 Environment|Address|Port
 -----------|-------|----
-Host|http://localhost:5004|5004
+Host|http://localhost:5000|5000
 Docker|http://identity.unite.net|80
 
 ## Configuration
@@ -67,7 +67,7 @@ docker run \
 --restart unless-stopped \
 --net unite \
 --net-alias identity.unite.net \
--p 127.0.0.1:5004:80 \
+-p 127.0.0.1:5000:80 \
 -e ASPNETCORE_ENVIRONMENT=Release \
 -e UNITE_SQL_HOST=sql.unite.net \
 -e UNITE_SQL_PORT=5432 \
