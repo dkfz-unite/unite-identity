@@ -1,6 +1,6 @@
 # Providers API
 
-## GET: [api/providers](http://localhost:5004/api/providers)
+## GET: [api/providers](http://localhost:5000/api/providers) - [api/identity/providers](https://localhost/api/identity/providers)
 Returns list of available identity providers.
 
 ### Responses

@@ -1,5 +1,4 @@
 # Identity Service API
-
 Consists of the following APIs:
 - [Identity API](api-identity.md) - Identity REST API.
 - [Account API](api-account.md) - Account management REST API.
@@ -7,8 +6,7 @@ Consists of the following APIs:
 - [Providers API](api-providers.md) - Identity providers management REST API.
 - [Workers API](api-workers.md) - Workers management REST API.
 
-
-## GET: [api](http://localhost:5004/api)
+## GET: [api](http://localhost:5000/api) - [api/identity](https://localhost/api/identity)
 Health check.
 
 ### Responses

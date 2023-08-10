@@ -1,6 +1,6 @@
 # Account API
 
-## POST: [api/account](http://localhost:5004/api/account)
+## POST: [api/account](http://localhost:5000/api/account) - [api/identity/account](https://localhost/api/identity/account)
 Creates new account.
 
 ### Body - application/json
@@ -23,7 +23,7 @@ Creates new account.
 - `400` - request data didn't pass validation
 
 
-## GET: [api/account](http://localhost:5004/api/account)
+## GET: [api/account](http://localhost:5000/api/account) - [api/identity/account](https://localhost/api/identity/account)
 Loads account data.
 
 ### Headers
@@ -45,7 +45,7 @@ Loads account data.
 ```
 
 
-## PUT: [api/account/password](http://localhost:5004/api/account/password)
+## PUT: [api/account/password](http://localhost:5000/api/account/password) - [api/identity/account/password](https://localhost/api/identity/account/password)
 Changes account password.
 
 ### Headers

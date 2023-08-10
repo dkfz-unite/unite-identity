@@ -2,7 +2,7 @@
 Api is protected and requires the following headers to be set:
 - `Authorization: Bearer [token]` - JWT token with `Root` role
 
-## GET: [api/workers](http://localhost:5004/api/workers)
+## GET: [api/workers](http://localhost:5000/api/workers) - [api/identity/workers](https://localhost/api/identity/workers)
 Returns list of existing workers.
 
 ### Responses
@@ -14,7 +14,7 @@ Returns list of existing workers.
 - [Worker](#worker)[] - list of workers
 
 
-## GET: [api/worker](http://localhost:5004/api/worker)
+## GET: [api/worker](http://localhost:5000/api/worker) - [api/identity/worker](https://localhost/api/identity/worker)
 Checks if worker exists.
 
 ### Parameters
@@ -26,7 +26,7 @@ Checks if worker exists.
 - `403` - missing required permissions
 
 
-## GET: [api/worker/{id}](http://localhost:5004/api/worker/1)
+## GET: [api/worker/{id}](http://localhost:5000/api/worker/1) - [api/identity/worker/{id}](https://localhost/api/identity/worker/1)
 Returns worker by id.
 
 ### Responses
@@ -39,7 +39,7 @@ Returns worker by id.
 - [Worker](#worker) - worker
 
 
-## POST: [api/worker](http://localhost:5004/api/worker)
+## POST: [api/worker](http://localhost:5000/api/worker) - [api/identity/worker](https://localhost/api/identity/worker)
 Creates new worker.
 
 ### Body - application/json
@@ -58,7 +58,7 @@ Creates new worker.
 - `403` - missing required permissions
 
 
-## PUT: [api/worker/{id}](http://localhost:5004/api/worker/1)
+## PUT: [api/worker/{id}](http://localhost:5000/api/worker/1) - [api/identity/worker/{id}](https://localhost/api/identity/worker/1)
 Updates worker.
 
 ### Body - application/json
@@ -78,7 +78,7 @@ Updates worker.
 - `404` - worker wasn't found
 
 
-## DELETE: [api/worker/{id}](http://localhost:5004/api/worker/1)
+## DELETE: [api/worker/{id}](http://localhost:5000/api/worker/1) - [api/identity/worker/{id}](https://localhost/api/identity/worker/1)
 Deletes worker.
 
 ### Responses
@@ -88,7 +88,7 @@ Deletes worker.
 - `404` - worker wasn't found
 
 
-## GET: [api/worker/{id}/token](http://localhost:5004/api/worker/1/token)
+## GET: [api/worker/{id}/token](http://localhost:5000/api/worker/1/token) - [api/identity/worker/{id}/token](https://localhost/api/identity/worker/1/token)
 Returns worker token.
 
 ### Responses
@@ -101,7 +101,7 @@ Returns worker token.
 - `unite_token` - JWT token as response body
 
 
-## POST: [api/worker/{id}/token](http://localhost:5004/api/worker/1/token)
+## POST: [api/worker/{id}/token](http://localhost:5000/api/worker/1/token) - [api/identity/worker/{id}/token](https://localhost/api/identity/worker/1/token)
 Creates new worker token.
 
 **NOTE**: Worker token is not revokable. It's valid until it expires. Deletion of the worker will not revoke the token. Share the token only with trusted applications. Choose token expiry time wisely.
@@ -127,7 +127,7 @@ Creates new worker token.
 - `unite_token` - JWT token as response body
 
 
-## PUT: [api/worker/{id}/token](http://localhost:5004/api/worker/1/token)
+## PUT: [api/worker/{id}/token](http://localhost:5000/api/worker/1/token) - [api/identity/worker/{id}/token](https://localhost/api/identity/worker/1/token)
 Updates worker token.
 
 **NOTE**: Worker token is not revokable. It's valid until it expires. Deletion of the worker will not revoke the token. Share the token only with trusted applications. Choose token expiry time wisely.

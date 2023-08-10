@@ -5,7 +5,7 @@ The following identity providers are supported:
 - `ldap` - LDAP identity provider (requires configuration)
 
 
-## POST: [api/realm/[provider]/login](http://localhost:5004/api/realm/default/login)
+## POST: [api/realm/[provider]/login](http://localhost:5000/api/realm/default/login) - [api/identity/realm/[provider]/login](https://localhost/api/identity/realm/default/login)
 Logs user in.
 
 ### Body - application/json
@@ -25,7 +25,7 @@ Logs user in.
 - `unite_session` - session as response cookie (HttpOnly, Secure)
 
 
-## POST: [api/realm/[provider]/logout](http://localhost:5004/api/realm/default/logout)
+## POST: [api/realm/[provider]/logout](http://localhost:5000/api/realm/default/logout) - [api/identity/realm/[provider]/logout](https://localhost/api/identity/realm/default/logout)
 Logs user out.
 
 ### Headers
@@ -36,7 +36,7 @@ Logs user out.
 - `401` - missing JWT token
 
 
-## POST: [api/realm/[provider]/token](http://localhost:5004/api/realm/default/token)
+## POST: [api/realm/[provider]/token](http://localhost:5000/api/realm/default/token) - [api/identity/realm/[provider]/token](https://localhost/api/identity/realm/default/token)
 Refreshes JWT token.
 
 ### Cookies

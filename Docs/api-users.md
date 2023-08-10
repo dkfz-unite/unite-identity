@@ -2,7 +2,7 @@
 Api is protected and requires the following headers to be set:
 - `Authorization: Bearer [token]` - JWT tokenwith `Root` role
 
-## GET: [api/users](http://localhost:5004/api/users)
+## GET: [api/users](http://localhost:5000/api/users) - [api/identity/users](https://localhost/api/identity/users)
 Returns list of existing users.
 
 ### Responses
@@ -14,7 +14,7 @@ Returns list of existing users.
 - [User](#user)[] - list of users
 
 
-## GET: [api/user](http://localhost:5004/api/user)
+## GET: [api/user](http://localhost:5000/api/user) - [api/identity/user](https://localhost/api/identity/user)
 Checks if user exists.
 
 ### Parameters
@@ -27,7 +27,7 @@ Checks if user exists.
 - `403` - missing required permissions
 
 
-## GET: [api/user/{id}](http://localhost:5004/api/user/1)
+## GET: [api/user/{id}](http://localhost:5000/api/user/1) - [api/identity/user/{id}](https://localhost/api/identity/user/1)
 Gets user data.
 
 ### Responses
@@ -40,7 +40,7 @@ Gets user data.
 - [User](#user) - user
 
 
-## POST: [api/user](http://localhost:5004/api/user)
+## POST: [api/user](http://localhost:5000/api/user) - [api/identity/user](https://localhost/api/identity/user)
 Creates new user.
 
 ### Body - application/json
@@ -62,7 +62,7 @@ Creates new user.
 - [User](#user) - created user
 
 
-## PUT: [api/user/{id}](http://localhost:5004/api/user/1)
+## PUT: [api/user/{id}](http://localhost:5000/api/user/1) - [api/identity/user/{id}](https://localhost/api/identity/user/1)
 Updates user.
 
 ### Body - application/json
@@ -84,7 +84,7 @@ Updates user.
 - [User](#user) - updated user
 
 
-## DELETE: [api/user/{id}](http://localhost:5004/api/user/1)
+## DELETE: [api/user/{id}](http://localhost:5000/api/user/1) - [api/identity/user/{id}](https://localhost/api/identity/user/1)
 Deletes user.
 
 ### Headers
