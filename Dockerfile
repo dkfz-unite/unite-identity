@@ -27,11 +27,8 @@ RUN dotnet publish "Unite.Identity.Web.csproj" -c Release -o /app/publish
 FROM base AS final
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        # libldap-2.-2 \
-        # libldap-2.6.6-2 \
-        libldap-common \
+        libldap-2.5-0 \
     && rm -rf /var/lib/apt/lists/*
-# RUN sudo ln -s /usr/lib/x86_64-linux-gnu/libldap-2.6.6.so.2 /usr/lib/x86_64-linux-gnu/libldap-2.4.so.2
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Unite.Identity.Web.dll"]
