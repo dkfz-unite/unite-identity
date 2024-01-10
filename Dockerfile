@@ -1,9 +1,11 @@
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
+ENV ASPNETCORE_HTTP_PORTS=80
+ENV ASPNETCORE_HTTPS_PORTS=443
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS restore
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS restore
 ARG USER
 ARG TOKEN
 WORKDIR /src
@@ -17,11 +19,9 @@ FROM restore as build
 COPY . .
 WORKDIR "/src/Unite.Identity.Web"
 RUN dotnet build --no-restore "Unite.Identity.Web.csproj" -c Release
-#--no-restore
 
 FROM build AS publish
 RUN dotnet publish --no-restore "Unite.Identity.Web.csproj" -c Release -o /app/publish
-#--no-restore
 
 FROM base AS final
 RUN apt-get update \

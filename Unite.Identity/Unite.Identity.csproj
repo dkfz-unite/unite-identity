@@ -1,11 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <!-- <Nullable>enable</Nullable> -->
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.DirectoryServices.Protocols" Version="7.0.0" />
-    <PackageReference Include="Unite.Identity.Data" Version="2.4.0" />
+    <PackageReference Include="System.DirectoryServices.Protocols" Version="8.0.0" />
+    <PackageReference Include="Unite.Identity.Data" Version="4.0.0" />
   </ItemGroup>
 </Project>
