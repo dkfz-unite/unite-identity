@@ -54,6 +54,30 @@ public class AccountController: Controller
         return Ok();
     }
 
+    [HttpDelete("")]
+    public IActionResult DeleteAccount()
+    {
+        var role = ClaimsHelper.GetValue(User.Claims, ClaimTypes.Role);
+
+        if (role != null && role.Contains("Root"))
+        {
+            return BadRequest("Root account cannot be deleted");
+        }
+
+        var provider = ClaimsHelper.GetValue(User.Claims, ClaimTypes.AuthenticationMethod);
+
+        var email = ClaimsHelper.GetValue(User.Claims, ClaimTypes.Email);
+
+        var deleted = _accountService.DeleteAccount(email, provider);
+
+        if (deleted == false)
+        {
+            return NotFound();
+        }
+
+        return Ok();
+    }
+
     [HttpPut("password")]
     public IActionResult ChangePassword([FromBody]ChangePasswordModel model)
     {

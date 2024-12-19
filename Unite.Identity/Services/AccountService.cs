@@ -54,6 +54,26 @@ public class AccountService
     }
 
     /// <summary>
+    /// Deletes user with specified email and provider.
+    /// </summary>
+    /// <param name="email">User email.</param>
+    /// <param name="provider">User provider.</param>
+    /// <returns>True if user was deleted. False otherwise.</returns>
+    public bool DeleteAccount(string email, string provider)
+    {
+        var user = GetUser(email, provider, true);
+
+        if (user != null)
+        {
+            _userService.Delete(user.Id);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// Changes password for user with specified email.
     /// Possible only for 'Default' identity provider.
     /// </summary>
