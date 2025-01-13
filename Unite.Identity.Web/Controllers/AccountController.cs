@@ -75,7 +75,7 @@ public class AccountController: Controller
             return NotFound();
         }
 
-        return Ok();
+        return Ok(email);
     }
 
     [HttpPut("password")]
