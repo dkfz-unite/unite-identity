@@ -80,6 +80,46 @@ public class WorkerService
         }
     }
 
+    public Worker Update(int id, string name, string description, Permission[] permissions)
+    {
+        var entity = Get(entity => entity.Id == id);
+
+        if (entity == null)
+            return null;
+
+        var exists = entity.Name != name && _dbContext.Set<Worker>().Any(entity => entity.Name == name);
+        
+        if (exists)
+            return null;
+
+        entity.Name = name;
+        entity.Description = description;
+
+        if (permissions != null)
+        {
+            var existingPermissions = entity.WorkerPermissions.ToList();
+            foreach (var p in existingPermissions)
+            {
+                _dbContext.Remove(p);
+            }
+
+            var newPermissions = GetServicePermissions(permissions);
+            foreach (var perm in newPermissions)
+            {
+                entity.WorkerPermissions.Add(new WorkerPermission
+                {
+                    PermissionId = perm.PermissionId,
+                    WorkerId = entity.Id
+                });
+            }
+        }
+
+        _dbContext.Update(entity);
+        _dbContext.SaveChanges();
+
+        return Get(entity.Id);
+    }
+
     public Worker Update(int id, Worker model)
     {
         var entity = Get(entity => entity.Id == id);
