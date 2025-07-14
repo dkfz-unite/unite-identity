@@ -68,7 +68,7 @@ public class WorkerController : Controller
         if (worker == null)
             return NotFound($"Worker with id '{id}' was not found");
 
-        worker = _workerService.Update(id, worker with { Name = model.Name, Description = model.Description });
+        worker = _workerService.Update(id, worker with { Name = model.Name, Description = model.Description }, model.Permissions);
 
         if (worker == null)
             return BadRequest("Worker with the same name already exists");
