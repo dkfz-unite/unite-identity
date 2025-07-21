@@ -41,6 +41,7 @@ public class ClaimsHelper
 
         claims.Add(new Claim(ClaimTypes.Actor, Actors.Worker));
         claims.Add(new Claim(ClaimTypes.Name, worker.Name));
+        claims.Add(new Claim(ClaimTypes.Sid, $"{worker.Id}")); // TODO: Change to WorkerTokenId.
 
         if (worker.WorkerPermissions != null)
         {
