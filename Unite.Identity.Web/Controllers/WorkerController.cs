@@ -88,6 +88,7 @@ public class WorkerController : Controller
     }
 
 
+    [AllowAnonymous]
     [HttpGet("token/{id}/active")]
     public IActionResult GetTokenStatus(int id)
     {
