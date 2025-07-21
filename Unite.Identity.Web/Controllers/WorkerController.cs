@@ -88,6 +88,23 @@ public class WorkerController : Controller
     }
 
 
+    [HttpGet("token/{id}/active")]
+    public IActionResult GetTokenStatus(int id)
+    {
+        // TODO: Check if the worker token exists.
+        // Id here is the ID of the worker token.
+        // If Yes - return OK, if not (it was revoked/removed) - return NotFound.
+
+        /// var workerToken = _workerTokenService.Get(id);
+        /// 
+        /// if (workerToken == null)
+        ///    return NotFound($"Worker token with id '{id}' was not found");
+        /// else
+        ///     return Ok();
+
+        return Ok();
+    }
+
     [HttpGet("{id}/token")]
     public IActionResult GetToken(int id)
     {
