@@ -5,24 +5,24 @@ using Unite.Identity.Web.Resources;
 
 namespace Unite.Identity.Web.Controllers;
 
-[Route("api/workers")]
+[Route("api/tokens")]
 [Authorize(Roles = "Root")]
-public class WorkersController : Controller
+public class TokensController : Controller
 {
-    private readonly WorkerService _workerService;
+    private readonly TokenService _tokenService;
 
-    public WorkersController(WorkerService workerService)
+    public TokensController(TokenService workerService)
     {
-        _workerService = workerService;
+        _tokenService = workerService;
     }
 
     [HttpGet("")]
     public IActionResult Get()
     {
-        var worker = _workerService
+        var worker = _tokenService
             .GetAll()
             .OrderBy(worker => worker.Name)
-            .Select(worker => new WorkerResource(worker))
+            .Select(worker => new TokenResource(worker))
             .ToArray();
 
         return Json(worker);

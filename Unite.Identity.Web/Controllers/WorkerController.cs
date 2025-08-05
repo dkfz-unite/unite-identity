@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Unite.Identity.Data.Entities;
 using Unite.Identity.Services;
 using Unite.Identity.Web.Configuration.Options;
 using Unite.Identity.Web.Helpers;
@@ -8,18 +9,18 @@ using Unite.Identity.Web.Resources;
 
 namespace Unite.Identity.Web.Controllers;
 
-[Route("api/worker")]
+[Route("api/token")]
 [Authorize(Roles = "Root")]
-public class WorkerController : Controller
+public class TokenController : Controller
 {
     protected readonly ApiOptions _apiOptions;
-    private readonly WorkerService _workerService;
+    private readonly TokenService _tokenService;
 
 
-    public WorkerController(ApiOptions apiOptions, WorkerService workerService)
+    public TokenController(ApiOptions apiOptions, TokenService TokenService)
     {
         _apiOptions = apiOptions;
-        _workerService = workerService;
+        _tokenService = TokenService;
     }
 
 
@@ -31,55 +32,67 @@ public class WorkerController : Controller
 
         var nameNormalized = name.Trim().ToLower();
 
-        var worker = _workerService.Get(worker => 
-            worker.Name == nameNormalized
+        var token = _tokenService.Get(token => 
+            token.Name == nameNormalized
         );
 
-        return Json(worker == null);
+        return Json(token == null);
     }
 
     [HttpGet("{id}")]
     public IActionResult Get(int id)
     {
-        var worker = _workerService.Get(id);
+        var token = _tokenService.Get(id);
 
-        if (worker == null)
+        if (token == null)
             return NotFound($"Worker with id '{id}' was not found");
 
-        return Json(new WorkerResource(worker));
+        return Json(new TokenResource(token));
     }
 
     [HttpPost("")]
     public IActionResult Add([FromBody]AddWorkerModel model)
     {
-        var worker = _workerService.Add(model.Name, model.Description, permissions: model.Permissions);
+        var token = new Token
+        {
+            Name = model.Name,
+            Description = model.Description,
+            TokenPermissions = model.Permissions?.Select(permission => new TokenPermission
+            {
+                PermissionId = permission
+            }).ToArray(),
+        };
+        var expiryDate = GetTokenExpiryDate(model.ExpiryDate);
+        var identity = ClaimsHelper.GetIdentity(token);
+        var value = TokenHelper.GenerateAuthorizationToken(identity, _apiOptions.Key, expiryDate);
+        token = _tokenService.Add(model.Name, expiryDate, permissions: model.Permissions, model.Description);
 
-        if (worker == null)
+        if (token == null)
             return BadRequest("Worker with the same name already exists");
 
-        return Json(new WorkerResource(worker));
+        return Json(value);
     }
 
     [HttpPut("{id}")]
     public IActionResult Update(int id, [FromBody]AddWorkerModel model)
     {
-        var worker = _workerService.Get(id);
+        var token = _tokenService.Get(id);
 
-        if (worker == null)
+        if (token == null)
             return NotFound($"Worker with id '{id}' was not found");
 
-        worker = _workerService.Update(id, worker with { Name = model.Name, Description = model.Description }, model.Permissions);
+        token = _tokenService.Update(id, token with { Name = model.Name, Description = model.Description, Revoked = model.Revoked }, model.Permissions);
 
-        if (worker == null)
+        if (token == null)
             return BadRequest("Worker with the same name already exists");
 
-        return Json(new WorkerResource(worker));
+        return Json(new TokenResource(token));
     }
 
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        var deleted = _workerService.Delete(id);
+        var deleted = _tokenService.Delete(id);
 
         if (!deleted)
             return NotFound($"Worker with id '{id}' was not found");
@@ -96,68 +109,85 @@ public class WorkerController : Controller
         // Id here is the ID of the worker token.
         // If Yes - return OK, if not (it was revoked/removed) - return NotFound.
 
-        /// var workerToken = _workerTokenService.Get(id);
-        /// 
-        /// if (workerToken == null)
-        ///    return NotFound($"Worker token with id '{id}' was not found");
-        /// else
-        ///     return Ok();
+        var tokenToken = _tokenService.GetToken(id);//key
+        //status - revoked, expired.
+        
+        if (tokenToken == null)
+            return NotFound($"Worker token with id '{id}' was not found");
+        else
+            return Ok();
+    }
+
+    // [HttpGet("{id}/token")]
+    // public IActionResult GetToken(int id)
+    // {
+    //     var token = _tokenService.Get(id);
+
+    //     if (token == null)
+    //         return NotFound($"Worker with id '{id}' was not found");
+
+    //     // return Json(token.Token);
+    //     return Ok();
+    // }
+
+    // [HttpPost("{id}/token")]
+    // public IActionResult AddToken(int id, [FromBody]AddWorkerTokenModel model)
+    // {
+    //     var token = _tokenService.Get(id);
+
+    //     if (token == null)
+    //         return NotFound($"Worker with id '{id}' was not found");
+
+    //     var identity = ClaimsHelper.GetIdentity(token);
+
+    //     var tokenExpiryDate = GetTokenExpiryDate(model);
+
+    //     var value = TokenHelper.GenerateAuthorizationToken(identity, _apiOptions.Key, tokenExpiryDate);
+
+    //     _tokenService.Update(id, token with { TokenExpiryDate = tokenExpiryDate });
+        
+    //     return Ok(value);
+    // }
+
+    [HttpPut("{id}/token")]
+    public IActionResult UpdateToken(int id, [FromBody]EditTokenModel model)
+    {
+        var token = _tokenService.Get(id);
+
+        if (token == null)
+            return NotFound($"Worker with id '{id}' was not found");
+
+        if (token.TokenExpiryDate > DateTime.UtcNow)
+            return BadRequest("Worker token has not expired yet");
+
+        var identity = ClaimsHelper.GetIdentity(token);
+
+        var tokenExpiryDate = GetTokenExpiryDate(model.ExpiryDate);
+
+        var value = TokenHelper.GenerateAuthorizationToken(identity, _apiOptions.Key, tokenExpiryDate);
+
+        _tokenService.Update(id, token with { TokenExpiryDate = tokenExpiryDate }, model.Permissions);
+
+        return Ok(value);
+    }
+
+    [HttpPut("{id}/revoke")]
+    public IActionResult UpdateToken(int id)
+    {
+        var token = _tokenService.Get(id);
+
+        if (token == null)
+            return NotFound($"Worker with id '{id}' was not found");
+
+        if (token.TokenExpiryDate < DateTime.UtcNow)
+            return BadRequest("Token has already expired");
+
+        token.Revoked = true;
+        _tokenService.Update(id, token);
 
         return Ok();
     }
-
-    [HttpGet("{id}/token")]
-    public IActionResult GetToken(int id)
-    {
-        var worker = _workerService.Get(id);
-
-        if (worker == null)
-            return NotFound($"Worker with id '{id}' was not found");
-
-        return Json(worker.Token);
-    }
-
-    [HttpPost("{id}/token")]
-    public IActionResult AddToken(int id, [FromBody]AddWorkerTokenModel model)
-    {
-        var worker = _workerService.Get(id);
-
-        if (worker == null)
-            return NotFound($"Worker with id '{id}' was not found");
-
-        var identity = ClaimsHelper.GetIdentity(worker);
-
-        var tokenExpiryDate = GetTokenExpiryDate(model);
-
-        var token = TokenHelper.GenerateAuthorizationToken(identity, _apiOptions.Key, tokenExpiryDate);
-
-        _workerService.Update(id, worker with { Token = token, TokenExpiryDate = tokenExpiryDate });
-        
-        return Ok(token);
-    }
-
-    [HttpPut("{id}/token")]
-    public IActionResult UpdateToken(int id, [FromBody]AddWorkerTokenModel model)
-    {
-        var worker = _workerService.Get(id);
-
-        if (worker == null)
-            return NotFound($"Worker with id '{id}' was not found");
-
-        if (worker.TokenExpiryDate > DateTime.UtcNow)
-            return BadRequest("Worker token has not expired yet");
-
-        var identity = ClaimsHelper.GetIdentity(worker);
-
-        var tokenExpiryDate = GetTokenExpiryDate(model);
-
-        var token = TokenHelper.GenerateAuthorizationToken(identity, _apiOptions.Key, tokenExpiryDate);
-
-        _workerService.Update(id, worker with { Token = token, TokenExpiryDate = tokenExpiryDate });
-
-        return Ok(token);
-    }
-
+    
 
     private static DateTime GetTokenExpiryDate(AddWorkerTokenModel model)
     {

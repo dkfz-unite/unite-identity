@@ -35,17 +35,17 @@ public class ClaimsHelper
         return identity;
     }
 
-    public static ClaimsIdentity GetIdentity(Worker worker)
+    public static ClaimsIdentity GetIdentity(Token token)
     {
         var claims = new List<Claim>();
 
         claims.Add(new Claim(ClaimTypes.Actor, Actors.Worker));
-        claims.Add(new Claim(ClaimTypes.Name, worker.Name));
-        claims.Add(new Claim(ClaimTypes.Sid, $"{worker.Id}")); // TODO: Change to WorkerTokenId.
+        claims.Add(new Claim(ClaimTypes.Name, token.Name));
+        claims.Add(new Claim(ClaimTypes.Sid, $"{token.Key}")); // TODO: Change to WorkerTokenId.
 
-        if (worker.WorkerPermissions != null)
+        if (token.TokenPermissions != null)
         {
-            foreach (var workerPermission in worker.WorkerPermissions)
+            foreach (var workerPermission in token.TokenPermissions)
             {
                 claims.Add(new Claim(PermissionClaimType, workerPermission.PermissionId.ToDefinitionString()));
             }
