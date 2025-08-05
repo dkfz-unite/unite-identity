@@ -2,19 +2,22 @@ using FluentValidation;
 
 namespace Unite.Identity.Web.Models.Validators;
 
-public class AddWorkerModelValidator : AbstractValidator<AddWorkerModel>
+public class AddTokenModelValidator : AbstractValidator<AddTokenModel>
 {
-    public AddWorkerModelValidator()
+    public AddTokenModelValidator()
     {
         RuleFor(model => model.Name)
             .NotEmpty().WithMessage("Should not be empty")
             .MaximumLength(100).WithMessage("Maximum length is 100");
+
+        RuleFor(model => model.ExpiryDate)
+            .SetValidator(new ExpiryDateModelValidator());
     }
 }
 
-public class AddWorkerTokenModelValidator : AbstractValidator<AddWorkerTokenModel>
+public class ExpiryDateModelValidator : AbstractValidator<EpiryDateModel>
 {
-    public AddWorkerTokenModelValidator()
+    public ExpiryDateModelValidator()
     {
         RuleFor(model => model)
             .Must(HaveExpiryTime).WithMessage("Should have expiry time set");
@@ -32,7 +35,7 @@ public class AddWorkerTokenModelValidator : AbstractValidator<AddWorkerTokenMode
             .LessThanOrEqualTo(365).WithMessage("Should be less than or equal to 365");
     }
 
-    private static bool HaveExpiryTime(AddWorkerTokenModel model)
+    private static bool HaveExpiryTime(EpiryDateModel model)
     {
         return model.ExpiryMinutes != null || model.ExpiryHours != null || model.ExpiryDays != null;
     }

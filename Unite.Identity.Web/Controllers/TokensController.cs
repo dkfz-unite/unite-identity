@@ -11,20 +11,20 @@ public class TokensController : Controller
 {
     private readonly TokenService _tokenService;
 
-    public TokensController(TokenService workerService)
+    public TokensController(TokenService tokenService)
     {
-        _tokenService = workerService;
+        _tokenService = tokenService;
     }
 
     [HttpGet("")]
     public IActionResult Get()
     {
-        var worker = _tokenService
+        var token = _tokenService
             .GetAll()
-            .OrderBy(worker => worker.Name)
-            .Select(worker => new TokenResource(worker))
+            .OrderBy(token => token.Name)
+            .Select(token => new TokenResource(token))
             .ToArray();
 
-        return Json(worker);
+        return Ok(token);
     }
 }

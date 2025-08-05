@@ -23,15 +23,6 @@ public class TokenService
             .FirstOrDefault(entity => entity.Id == id);
     }
 
-    public Token GetToken(int key)
-    {
-        return _dbContext.Set<Token>()
-            .Include(entity => entity.TokenPermissions)
-            .FirstOrDefault(entity => entity.Key == key.ToString()
-            && !entity.Revoked
-            && entity.TokenExpiryDate > DateTime.UtcNow);
-    }
-
     public Token Get(Expression<Func<Token, bool>> predicate)
     {
         return _dbContext.Set<Token>()
@@ -54,15 +45,14 @@ public class TokenService
             .ToArray();
     }
 
-    public Token Add(string name, DateTime tokenExpiryDate, Permission[] permissions, string description = null)
+    public Token Add(string name, DateTime expiryDate, Permission[] permissions, string description = null)
     {
         var model = new Token
         {
             Name = name,
             Description = description,
-            // Token = token,
             Key = Guid.NewGuid().ToString(),
-            TokenExpiryDate = tokenExpiryDate,
+            ExpiryDate = expiryDate,
             TokenPermissions = GetServicePermissions(permissions)
         };
 
@@ -104,7 +94,7 @@ public class TokenService
 
         entity.Name = model.Name;
         entity.Description = model.Description;
-        entity.TokenExpiryDate = model.TokenExpiryDate;
+        entity.ExpiryDate = model.ExpiryDate;
 
         if (permissions != null)
         {
@@ -166,6 +156,13 @@ public class TokenService
         }
     }
 
+    public bool IsActive(string key)
+    {
+        var token = _dbContext.Set<Token>()
+            .FirstOrDefault(entity => entity.Key == key && !entity.Revoked && entity.ExpiryDate > DateTime.UtcNow);
+
+        return token != null;
+    }
 
     private static TokenPermission[] GetServicePermissions(Permission[] permissions = null)
     {
@@ -180,10 +177,9 @@ public class TokenService
     {
         target.Name = source.Name;
         target.Description = source.Description;
-        // target.Token = source.Token;
         target.Key = source.Key;
         target.Revoked = source.Revoked;
-        target.TokenExpiryDate = source.TokenExpiryDate;
+        target.ExpiryDate = source.ExpiryDate;
         target.TokenPermissions = source.TokenPermissions;
     }
 }

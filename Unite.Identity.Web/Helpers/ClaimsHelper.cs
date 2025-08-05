@@ -41,13 +41,13 @@ public class ClaimsHelper
 
         claims.Add(new Claim(ClaimTypes.Actor, Actors.Worker));
         claims.Add(new Claim(ClaimTypes.Name, token.Name));
-        claims.Add(new Claim(ClaimTypes.Sid, $"{token.Key}")); // TODO: Change to WorkerTokenId.
+        claims.Add(new Claim(ClaimTypes.Sid, $"{token.Key}"));
 
         if (token.TokenPermissions != null)
         {
-            foreach (var workerPermission in token.TokenPermissions)
+            foreach (var tokenPermission in token.TokenPermissions)
             {
-                claims.Add(new Claim(PermissionClaimType, workerPermission.PermissionId.ToDefinitionString()));
+                claims.Add(new Claim(PermissionClaimType, tokenPermission.PermissionId.ToDefinitionString()));
             }
         }
 
