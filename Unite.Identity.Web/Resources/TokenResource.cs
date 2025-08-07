@@ -3,25 +3,29 @@ using Unite.Identity.Data.Extensions;
 
 namespace Unite.Identity.Web.Resources;
 
-public class WorkerResource
+public class TokenResource
 {
     public int Id { get; set; }
+    public string Key { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public string[] Permissions { get; set; }
-    public DateTime? TokenExpiryDate { get; set; }
+    public DateTime? ExpiryDate { get; set; }
+    public bool Revoked { get; set; }
 
 
-    public WorkerResource(Worker entity)
+    public TokenResource(Token entity)
     {
         Id = entity.Id;
+        Key = entity.Key;
         Name = entity.Name;
         Description = entity.Description;
-        TokenExpiryDate = entity.TokenExpiryDate;
+        ExpiryDate = entity.ExpiryDate;
+        Revoked = entity.Revoked;
 
-        if (entity.WorkerPermissions?.Any() == true)
+        if (entity.TokenPermissions?.Any() == true)
         {
-            Permissions = entity.WorkerPermissions
+            Permissions = entity.TokenPermissions
                 .Select(servicePermission => servicePermission.PermissionId.ToDefinitionString())
                 .ToArray();
         }

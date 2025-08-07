@@ -7,65 +7,65 @@ using Unite.Identity.Data.Services;
 
 namespace Unite.Identity.Services;
 
-public class WorkerService
+public class TokenService
 {
     private readonly IdentityDbContext _dbContext;
 
-    public WorkerService(IdentityDbContext dbContext)
+    public TokenService(IdentityDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
-    public Worker Get(int id)
+    public Token Get(int id)
     {
-        return _dbContext.Set<Worker>()
-            .Include(entity => entity.WorkerPermissions)
+        return _dbContext.Set<Token>()
+            .Include(entity => entity.TokenPermissions)
             .FirstOrDefault(entity => entity.Id == id);
     }
 
-    public Worker Get(Expression<Func<Worker, bool>> predicate)
+    public Token Get(Expression<Func<Token, bool>> predicate)
     {
-        return _dbContext.Set<Worker>()
-            .Include(entity => entity.WorkerPermissions)
+        return _dbContext.Set<Token>()
+            .Include(entity => entity.TokenPermissions)
             .FirstOrDefault(predicate);
     }
 
-    public Worker[] GetAll()
+    public Token[] GetAll()
     {
-        return _dbContext.Set<Worker>()
-            .Include(entity => entity.WorkerPermissions)
+        return _dbContext.Set<Token>()
+            .Include(entity => entity.TokenPermissions)
             .ToArray();
     }
 
-    public Worker[] GetAll(Expression<Func<Worker, bool>> predicate)
+    public Token[] GetAll(Expression<Func<Token, bool>> predicate)
     {
-        return _dbContext.Set<Worker>()
-            .Include(entity => entity.WorkerPermissions)
+        return _dbContext.Set<Token>()
+            .Include(entity => entity.TokenPermissions)
             .Where(predicate)
             .ToArray();
     }
 
-    public Worker Add(string name, string description = null, string token = null, DateTime? tokenExpiryDate = null, Permission[] permissions = null)
+    public Token Add(string name, DateTime expiryDate, Permission[] permissions, string description = null)
     {
-        var model = new Worker
+        var model = new Token
         {
             Name = name,
             Description = description,
-            Token = token,
-            TokenExpiryDate = tokenExpiryDate,
-            WorkerPermissions = GetServicePermissions(permissions)
+            Key = Guid.NewGuid().ToString(),
+            ExpiryDate = expiryDate,
+            TokenPermissions = GetServicePermissions(permissions)
         };
 
         return Add(model);
     }
 
-    public Worker Add(Worker model)
+    public Token Add(Token model)
     {
         var entity = Get(entity => entity.Name == model.Name);
 
         if (entity == null)
         {
-            entity = new Worker();
+            entity = new Token();
 
             Map(model, ref entity);
 
@@ -80,33 +80,34 @@ public class WorkerService
         }
     }
 
-    public Worker Update(int id, Worker model, Permission[] permissions)
+    public Token Update(int id, Token model, Permission[] permissions)
     {
         var entity = Get(entity => entity.Id == id);
 
         if (entity == null)
             return null;
 
-        var exists = entity.Name != model.Name && _dbContext.Set<Worker>().Any(entity => entity.Name == model.Name);
+        var exists = entity.Name != model.Name && _dbContext.Set<Token>().Any(entity => entity.Name == model.Name);
         
         if (exists)
             return null;
 
         entity.Name = model.Name;
         entity.Description = model.Description;
+        entity.ExpiryDate = model.ExpiryDate;
 
         if (permissions != null)
         {
-            foreach (var permission in entity.WorkerPermissions)
+            foreach (var permission in entity.TokenPermissions)
             {
                 _dbContext.Remove(permission);
             }
 
             foreach (var permission in GetServicePermissions(permissions))
             {
-                entity.WorkerPermissions.Add(new WorkerPermission
+                entity.TokenPermissions.Add(new TokenPermission
                 {
-                    WorkerId = entity.Id,
+                    TokenId = entity.Id,
                     PermissionId = permission.PermissionId
                 });
             }
@@ -118,14 +119,14 @@ public class WorkerService
         return Get(entity.Id);
     }
 
-    public Worker Update(int id, Worker model)
+    public Token Update(int id, Token model)
     {
         var entity = Get(entity => entity.Id == id);
 
         if (entity == null)
             return null;
 
-        var exists = entity.Name != model.Name && _dbContext.Set<Worker>().Any(entity => entity.Name == model.Name);
+        var exists = entity.Name != model.Name && _dbContext.Set<Token>().Any(entity => entity.Name == model.Name);
         
         if (exists)
             return null;
@@ -155,22 +156,30 @@ public class WorkerService
         }
     }
 
+    public bool IsActive(string key)
+    {
+        var token = _dbContext.Set<Token>()
+            .FirstOrDefault(entity => entity.Key == key && !entity.Revoked && entity.ExpiryDate > DateTime.UtcNow);
 
-    private static WorkerPermission[] GetServicePermissions(Permission[] permissions = null)
+        return token != null;
+    }
+
+    private static TokenPermission[] GetServicePermissions(Permission[] permissions = null)
     {
         var defaultPermissions = Permissions.DefaultPermissions;
 
         return permissions != null && permissions.Any()
-            ? permissions.Select(permissionId => new WorkerPermission { PermissionId = permissionId }).ToArray()
-            : defaultPermissions.Select(permissionId => new WorkerPermission { PermissionId = permissionId }).ToArray();
+            ? permissions.Select(permissionId => new TokenPermission { PermissionId = permissionId }).ToArray()
+            : defaultPermissions.Select(permissionId => new TokenPermission { PermissionId = permissionId }).ToArray();
     }
 
-    private static void Map(in Worker source, ref Worker target)
+    private static void Map(in Token source, ref Token target)
     {
         target.Name = source.Name;
         target.Description = source.Description;
-        target.Token = source.Token;
-        target.TokenExpiryDate = source.TokenExpiryDate;
-        target.WorkerPermissions = source.WorkerPermissions;
+        target.Key = source.Key;
+        target.Revoked = source.Revoked;
+        target.ExpiryDate = source.ExpiryDate;
+        target.TokenPermissions = source.TokenPermissions;
     }
 }
