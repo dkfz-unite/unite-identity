@@ -6,7 +6,7 @@ public class AddTokenModel
 {
     private string _name;
     private string _description;
-    public string Name { get => _name?.Trim().ToLower(); set => _name = value; }
+    public string Name { get => _name?.Trim(); set => _name = value; }
     public string Description { get => _description?.Trim(); set => _description = value; }
     public string Key { get; set; }
     public bool Revoked { get; set; }
