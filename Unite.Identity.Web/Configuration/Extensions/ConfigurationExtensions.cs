@@ -24,7 +24,7 @@ public static class ConfigurationExtensions
         services.AddTransient<UserService>();
         services.AddTransient<ProviderService>();
         services.AddTransient<SessionService>();
-        services.AddTransient<WorkerService>();
+        services.AddTransient<TokenService>();
         services.AddTransient<LdapService>();
         services.AddTransient<LdapIdentityService>();
         services.AddTransient<DefaultIdentityService>();
@@ -51,8 +51,9 @@ public static class ConfigurationExtensions
         services.AddTransient<IValidator<EditUserModel>, EditUserModelValidator>();
         services.AddTransient<IValidator<AddProviderModel>, AddProviderModelValidator>();
         services.AddTransient<IValidator<EditProviderModel>, EditProviderModelValidator>();
-        services.AddTransient<IValidator<AddWorkerModel>, AddWorkerModelValidator>();
-        services.AddTransient<IValidator<AddWorkerTokenModel>, AddWorkerTokenModelValidator>();
+        services.AddTransient<IValidator<AddTokenModel>, AddTokenModelValidator>();
+        services.AddTransient<IValidator<EditTokenModel>, EditTokenModelValidator>();
+        services.AddTransient<IValidator<EpiryDateModel>, ExpiryDateModelValidator>();
         services.AddTransient<IValidator<IdentityModel>, IdentityModelValidator>();
         services.AddTransient<IValidator<CreateAccountModel>, CreateAccountModelValidator>();
         services.AddTransient<IValidator<ChangePasswordModel>, ChangePasswordModelValidator>();
