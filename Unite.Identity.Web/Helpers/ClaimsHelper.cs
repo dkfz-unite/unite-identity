@@ -13,9 +13,11 @@ public class ClaimsHelper
     {
         var claims = new List<Claim>();
 
+        claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
         claims.Add(new Claim(ClaimTypes.Actor, Actors.User));
         claims.Add(new Claim(ClaimTypes.Email, user.Email));
         claims.Add(new Claim(ClaimTypes.AuthenticationMethod, user.Provider.Name));
+        
 
         if (user.IsRoot)
         {
