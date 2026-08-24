@@ -6,6 +6,7 @@ using Unite.Identity.Services;
 using Unite.Identity.Web.Helpers;
 using Unite.Identity.Web.Models;
 using Unite.Identity.Web.Configuration.Constants;
+using Unite.Identity.Web.Configuration.Options;
 
 namespace Unite.Identity.Web.Controllers;
 
@@ -14,14 +15,17 @@ namespace Unite.Identity.Web.Controllers;
 public class AccountController: Controller
 {
     private readonly AccountService _accountService;
+    private readonly InstanceOptions _instanceOptions;
     private readonly ILogger _logger;
 
 
     public AccountController(
-        AccountService accountService, 
+        AccountService accountService,
+        InstanceOptions instanceOptions,
         ILogger<AccountController> logger)
     {
         _accountService = accountService;
+        _instanceOptions = instanceOptions;
         _logger = logger;
     }
 
@@ -44,11 +48,23 @@ public class AccountController: Controller
     [AllowAnonymous]
     public IActionResult CreateAccount([FromBody]CreateAccountModel model)
     {
-        var user = _accountService.CreateAccount(model.Email, model.Password);
-
-        if (user == null)
+        if (_instanceOptions.Public)
         {
-            return BadRequest("Email address is not in access list or already registered");
+            var user = _accountService.CreatePublicAccount(model.Email, model.Password);
+
+            if (user == null)
+            {
+                return BadRequest("Email address is already registered");
+            }
+        }
+        else
+        {
+            var user = _accountService.CreatePrivateAccount(model.Email, model.Password);
+
+            if (user == null)
+            {
+                return BadRequest("Email address is not in access list or already registered");
+            }
         }
 
         return Ok();
@@ -83,7 +99,7 @@ public class AccountController: Controller
     {
         var email = ClaimsHelper.GetValue(User.Claims, ClaimTypes.Email);
 
-        var user = _accountService.ChangePassword(email, model.NewPassword);
+        var user = _accountService.ChangePassword(email, model.NewPassword, model.OldPassword);
 
         if (user == null)
         {

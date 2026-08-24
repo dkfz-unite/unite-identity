@@ -120,7 +120,7 @@ public class RootHostedService : BackgroundService
 
             _userService.Add(_adminOptions.Login, providerId, false, true, Permissions.RootPermissions);
 
-            _accountService.CreateAccount(_adminOptions.Login, _adminOptions.Password);
+            _accountService.CreatePrivateAccount(_adminOptions.Login, _adminOptions.Password);
         }
     }
 }

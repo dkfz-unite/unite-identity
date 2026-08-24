@@ -2,6 +2,6 @@
 
 public static class Providers
 {
-    public static string Default = "default";
-    public static string Ldap = "ldap";
+    public static readonly string Default = "default";
+    public static readonly string Ldap = "ldap";
 }
