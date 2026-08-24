@@ -59,6 +59,7 @@ public class UserService
                 IsActive = isActive,
                 IsRoot = isRoot,
                 UserPermissions = GetUserPermissions(permissions),
+                LastActive = DateTime.UtcNow
             };
 
             _dbContext.Add(user);
@@ -80,6 +81,7 @@ public class UserService
         {
             user.ProviderId = providerId;
             user.UserPermissions = GetUserPermissions(permissions);
+            user.LastActive = DateTime.UtcNow;
 
             _dbContext.Update(user);
             _dbContext.SaveChanges();
@@ -90,6 +92,14 @@ public class UserService
         {
             return null;
         }
+    }
+
+    public void UpdateActivity(User user)
+    {
+        user.LastActive = DateTime.UtcNow;
+
+        _dbContext.Update(user);
+        _dbContext.SaveChanges();
     }
 
     public bool Delete(int id)

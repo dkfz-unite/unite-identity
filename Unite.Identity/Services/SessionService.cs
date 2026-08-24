@@ -12,7 +12,7 @@ public class SessionService
         _dbContext = dbContext;
     }
 
-    public UserSession CreateSession(User user, string client)
+    public UserSession CreateSession(User user, string client, DateTime expiryDate)
     {
         var session = Guid.NewGuid().ToString();
 
@@ -20,7 +20,8 @@ public class SessionService
         {
             UserId = user.Id,
             Client = client,
-            Session = session
+            Session = session,
+            Expires = expiryDate
         };
 
         _dbContext.Add(userSession);
@@ -38,6 +39,15 @@ public class SessionService
             );
 
         return userSession;
+    }
+
+    public string RotateSession(UserSession session)
+    {
+        session.Session = Guid.NewGuid().ToString();
+        _dbContext.Update(session);
+        _dbContext.SaveChanges();
+
+        return session.Session;
     }
 
     public void RemoveSession(UserSession session)
