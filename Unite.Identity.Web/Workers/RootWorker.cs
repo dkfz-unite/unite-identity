@@ -3,9 +3,9 @@ using Unite.Identity.Data.Entities;
 using Unite.Identity.Services;
 using Unite.Identity.Web.Configuration.Options;
 
-namespace Unite.Identity.Web.HostedServices;
+namespace Unite.Identity.Web.Workers;
 
-public class RootHostedService : BackgroundService
+public class RootWorker : BackgroundService
 {
     private readonly AdminOptions _adminOptions;
     private readonly DefaultProviderOptions _defaultProviderOptions;
@@ -16,14 +16,14 @@ public class RootHostedService : BackgroundService
     private readonly ILogger _logger;
 
 
-    public RootHostedService(
+    public RootWorker(
         AdminOptions adminOptions,
         DefaultProviderOptions providerOptions,
         LdapProviderOptions ldapOptions,
         UserService userService,
         ProviderService providerService,
         AccountService accountService,
-        ILogger<RootHostedService> logger)
+        ILogger<RootWorker> logger)
     {
         _adminOptions = adminOptions;
         _defaultProviderOptions = providerOptions;
@@ -56,7 +56,7 @@ public class RootHostedService : BackgroundService
     {
         _logger.LogInformation("Configuring 'Default' identity provider");
 
-        var provider = _providerService.GetProvider(provider => provider.Name == Providers.Default);
+        var provider = _providerService.Get(provider => provider.Name == Providers.Default);
 
         if (provider == null && options.Active)
         {
@@ -85,7 +85,7 @@ public class RootHostedService : BackgroundService
     {
         _logger.LogInformation("Configuring 'LDAP' identity provider");
 
-        var provider = _providerService.GetProvider(provider => provider.Name == Providers.Ldap);
+        var provider = _providerService.Get(provider => provider.Name == Providers.Ldap);
 
         if (provider == null && options.Active)
         {
@@ -112,7 +112,7 @@ public class RootHostedService : BackgroundService
 
     private void CreateRootAccount(int providerId)
     {
-        var user = _userService.GetUser(user => user.ProviderId == providerId && user.Email == _adminOptions.Login);
+        var user = _userService.Get(user => user.ProviderId == providerId && user.Email == _adminOptions.Login);
 
         if (user == null)
         {
@@ -120,7 +120,7 @@ public class RootHostedService : BackgroundService
 
             _userService.Add(_adminOptions.Login, providerId, false, true, Permissions.RootPermissions);
 
-            _accountService.CreatePrivateAccount(_adminOptions.Login, _adminOptions.Password);
+            _accountService.AddPrivate(_adminOptions.Login, _adminOptions.Password);
         }
     }
 }

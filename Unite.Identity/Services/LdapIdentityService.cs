@@ -17,18 +17,12 @@ public class LdapIdentityService : BaseIdentityService, IIdentityService
     public User LoginUser(string login, string password)
     {
         var ldapUser = _ldapService.FindUser(login);
-
         if (ldapUser == null)
-        {
             return null;
-        }
 
         var uniteUser = GetUser(Providers.Ldap, ldapUser.Email, true);
-
         if (uniteUser == null)
-        {
             return null;
-        }
 
         var authenticated = _ldapService.AuthenticateUser(ldapUser.Login, password);
 

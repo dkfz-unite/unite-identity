@@ -11,112 +11,97 @@ public class UserService
 {
     private readonly IdentityDbContext _dbContext;
 
+
     public UserService(IdentityDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
 
-    public User GetUser(int id)
+    public User Get(int id)
     {
-        return GetUser(user => user.Id == id);
+        return Get(entity => entity.Id == id);
     }
 
-    public User GetUser(Expression<Func<User, bool>> predicate)
+    public User Get(Expression<Func<User, bool>> predicate)
     {
         return _dbContext.Set<User>()
-            .Include(user => user.Provider)
-            .Include(user => user.UserPermissions)
-            .Include(user => user.UserSessions)
+            .Include(entity => entity.Provider)
+            .Include(entity => entity.UserPermissions)
+            .Include(entity => entity.UserSessions)
             .FirstOrDefault(predicate);
     }
 
-    public User[] GetUsers()
-    {
-        return GetUsers(user => true);
-    }
-
-    public User[] GetUsers(Expression<Func<User, bool>> predicate)
+    public User[] GetAll(Expression<Func<User, bool>> predicate)
     {
         return _dbContext.Set<User>()
-            .Include(user => user.Provider)
-            .Include(user => user.UserPermissions)
-            .Include(user => user.UserSessions)
+            .Include(entity => entity.Provider)
+            .Include(entity => entity.UserPermissions)
+            .Include(entity => entity.UserSessions)
             .Where(predicate)
             .ToArray();
     }
 
     public User Add(string email, int providerId, bool isActive, bool isRoot, Permission[] permissions = null)
     {
-        var user = GetUser(user => user.Email == email && user.ProviderId == providerId);
-
-        if (user == null)
-        {
-            user = new User
-            {
-                ProviderId = providerId,
-                Email = email,
-                IsActive = isActive,
-                IsRoot = isRoot,
-                UserPermissions = GetUserPermissions(permissions),
-                LastActive = DateTime.UtcNow
-            };
-
-            _dbContext.Add(user);
-            _dbContext.SaveChanges();
-
-            return GetUser(user.Id);
-        }
-        else
-        {
+        var entity = Get(user => user.Email == email && user.ProviderId == providerId);
+        if (entity != null)
             return null;
-        }
+
+        entity = new User
+        {
+            ProviderId = providerId,
+            Email = email,
+            IsActive = isActive,
+            IsRoot = isRoot,
+            UserPermissions = GetUserPermissions(permissions),
+            LastActive = DateTime.UtcNow
+        };
+
+        _dbContext.Add(entity);
+        _dbContext.SaveChanges();
+
+        return Get(entity.Id);
     }
 
     public User Update(int id, int providerId, Permission[] permissions = null)
     {
-        var user = GetUser(id);
-
-        if (user != null)
-        {
-            user.ProviderId = providerId;
-            user.UserPermissions = GetUserPermissions(permissions);
-            user.LastActive = DateTime.UtcNow;
-
-            _dbContext.Update(user);
-            _dbContext.SaveChanges();
-
-            return GetUser(user.Id);
-        }
-        else
-        {
+        var entity = Get(id);
+        if (entity == null)
             return null;
-        }
+
+        entity.ProviderId = providerId;
+        entity.UserPermissions = GetUserPermissions(permissions);
+        entity.LastActive = DateTime.UtcNow;
+
+        _dbContext.Update(entity);
+        _dbContext.SaveChanges();
+
+        return Get(entity.Id);
     }
 
-    public void UpdateActivity(User user)
+    public void UpdateActivity(User entity)
     {
-        user.LastActive = DateTime.UtcNow;
+        entity.LastActive = DateTime.UtcNow;
 
-        _dbContext.Update(user);
+        _dbContext.Update(entity);
         _dbContext.SaveChanges();
     }
 
     public bool Delete(int id)
     {
-        var user = GetUser(id);
-
-        if (user != null)
-        {
-            _dbContext.Remove(user);
-            _dbContext.SaveChanges();
-
-            return true;
-        }
-        else
-        {
+        var entity = Get(id);
+        if (entity == null)
             return false;
-        }
+        
+        Delete(entity);
+        return true;
+    }
+
+    public void Delete(User entity)
+    {
+        _dbContext.Remove(entity);
+        _dbContext.SaveChanges();
     }
 
 

@@ -56,7 +56,7 @@ public abstract class IdentityController<TIdentityService> : Controller where TI
 
         var identity = ClaimsHelper.GetIdentity(user);
 
-        var userSession = _sessionService.CreateSession(user, client, DateTime.UtcNow.AddDays(SESSION_EXPIRY_DAYS));
+        var userSession = _sessionService.Add(user.Id, client, DateTime.UtcNow.AddDays(SESSION_EXPIRY_DAYS));
 
         CookieHelper.SetSessionCookie(Response, userSession.Session, userSession.Expires);
 
@@ -84,7 +84,7 @@ public abstract class IdentityController<TIdentityService> : Controller where TI
     
         if (session != null)
         {
-            var userSession = _sessionService.FindSession(user, session);
+            var userSession = _sessionService.Get(user.Id, session);
 
             if (userSession == null)
             {
@@ -93,7 +93,7 @@ public abstract class IdentityController<TIdentityService> : Controller where TI
                 return BadRequest();
             }
 
-            _sessionService.RemoveSession(userSession);
+            _sessionService.Delete(userSession);
 
             CookieHelper.DeleteSessionCookie(Response);
         }
@@ -137,7 +137,7 @@ public abstract class IdentityController<TIdentityService> : Controller where TI
 
         _userService.UpdateActivity(user);
 
-        _sessionService.RotateSession(userSession);
+        _sessionService.Rotate(userSession);
 
         CookieHelper.SetSessionCookie(Response, userSession.Session, userSession.Expires);
 
@@ -147,7 +147,7 @@ public abstract class IdentityController<TIdentityService> : Controller where TI
 
     protected User FindUser(string email, bool isActive = true)
     {
-        return _userService.GetUser(user =>
+        return _userService.Get(user =>
             user.Provider.Name == Provider && 
             user.Email == email && 
             user.IsActive == isActive
@@ -156,6 +156,6 @@ public abstract class IdentityController<TIdentityService> : Controller where TI
 
     protected UserSession FindUserSession(User user, string session)
     {
-        return _sessionService.FindSession(user, session);
+        return _sessionService.Get(user.Id, session);
     }
 }

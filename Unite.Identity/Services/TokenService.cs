@@ -47,7 +47,7 @@ public class TokenService
 
     public Token Add(string name, DateTime expiryDate, Permission[] permissions, string description = null)
     {
-        var model = new Token
+        var entity = new Token
         {
             Name = name,
             Description = description,
@@ -56,45 +56,41 @@ public class TokenService
             TokenPermissions = GetServicePermissions(permissions)
         };
 
-        return Add(model);
+        return Add(entity);
     }
 
-    public Token Add(Token model)
+    public Token Add(Token token)
     {
-        var entity = Get(entity => entity.Name == model.Name);
+        var entity = Get(entity => entity.Name == token.Name);
 
-        if (entity == null)
-        {
-            entity = new Token();
-
-            Map(model, ref entity);
-
-            _dbContext.Add(entity);
-            _dbContext.SaveChanges();
-
-            return Get(entity.Id);
-        }
-        else
-        {
+        if (entity != null)
             return null;
-        }
+
+        entity = new Token();
+
+        Map(token, ref entity);
+
+        _dbContext.Add(entity);
+        _dbContext.SaveChanges();
+
+        return Get(entity.Id);
     }
 
-    public Token Update(int id, Token model, Permission[] permissions)
+    public Token Update(int id, Token token, Permission[] permissions)
     {
         var entity = Get(entity => entity.Id == id);
 
         if (entity == null)
             return null;
 
-        var exists = entity.Name != model.Name && _dbContext.Set<Token>().Any(entity => entity.Name == model.Name);
+        var exists = entity.Name != token.Name && _dbContext.Set<Token>().Any(entity => entity.Name == token.Name);
         
         if (exists)
             return null;
 
-        entity.Name = model.Name;
-        entity.Description = model.Description;
-        entity.ExpiryDate = model.ExpiryDate;
+        entity.Name = token.Name;
+        entity.Description = token.Description;
+        entity.ExpiryDate = token.ExpiryDate;
 
         if (permissions != null)
         {
@@ -119,19 +115,19 @@ public class TokenService
         return Get(entity.Id);
     }
 
-    public Token Update(int id, Token model)
+    public Token Update(int id, Token token)
     {
         var entity = Get(entity => entity.Id == id);
 
         if (entity == null)
             return null;
 
-        var exists = entity.Name != model.Name && _dbContext.Set<Token>().Any(entity => entity.Name == model.Name);
+        var exists = entity.Name != token.Name && _dbContext.Set<Token>().Any(entity => entity.Name == token.Name);
         
         if (exists)
             return null;
 
-        Map(model, ref entity);
+        Map(token, ref entity);
 
         _dbContext.Update(entity);
         _dbContext.SaveChanges();
@@ -143,26 +139,30 @@ public class TokenService
     {
         var entity = Get(id);
 
-        if (entity != null)
-        {
-            _dbContext.Remove(entity);
-            _dbContext.SaveChanges();
-
-            return true;
-        }
-        else
-        {
+        if (entity == null)
             return false;
-        }
+
+        Delete(entity);
+        return true;
+    }
+
+    public void Delete(Token entity)
+    {
+        _dbContext.Remove(entity);
+        _dbContext.SaveChanges();
     }
 
     public bool IsActive(string key)
     {
-        var token = _dbContext.Set<Token>()
-            .FirstOrDefault(entity => entity.Key == key && !entity.Revoked && entity.ExpiryDate > DateTime.UtcNow);
+        var token = Get(entity =>
+            entity.Key == key &&
+            entity.Revoked == false &&
+            entity.ExpiryDate > DateTime.UtcNow
+        );
 
         return token != null;
     }
+
 
     private static TokenPermission[] GetServicePermissions(Permission[] permissions = null)
     {

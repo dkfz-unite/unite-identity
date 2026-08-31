@@ -5,8 +5,10 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.DirectoryServices.Protocols" Version="8.0.0" />
-    <!-- <PackageReference Include="Unite.Identity.Data" Version="4.1.0" /> -->
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.0" />
+    <!-- <PackageReference Include="Unite.Identity.Data" Version="4.1.0" /> -->
+    <PackageReference Include="Unite.Cache" Version="1.3.0" />
+    <PackageReference Include="Unite.Data.Context" Version="12.10.20" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../unite-identity-data/Unite.Identity.Data/Unite.Identity.Data.csproj" />

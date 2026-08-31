@@ -35,7 +35,7 @@ public class UserController : Controller
         
         var emailNormalized = email.Trim().ToLower();
 
-        var user = _userService.GetUser(user =>
+        var user = _userService.Get(user =>
             user.Provider.Name == providerNormalized &&
             user.Email == emailNormalized
         );
@@ -46,7 +46,7 @@ public class UserController : Controller
     [HttpGet("{id}")]
     public IActionResult Get(int id)
     {
-        var user = _userService.GetUser(id);
+        var user = _userService.Get(id);
 
         if (user == null)
             return NotFound($"User with id '{id}' was not found");
@@ -57,7 +57,7 @@ public class UserController : Controller
     [HttpPost("")]
     public IActionResult Post([FromBody]AddUserModel model)
     {
-        var provider = _providerService.GetProvider(model.ProviderId.Value);
+        var provider = _providerService.Get(model.ProviderId.Value);
 
         if (provider == null)
             return NotFound($"Provider with id '{model.ProviderId}' was not found");
@@ -75,7 +75,7 @@ public class UserController : Controller
     [HttpPut("{id}")]
     public IActionResult Put(int id, [FromBody]EditUserModel model)
     {
-        var provider = _providerService.GetProvider(model.ProviderId.Value);
+        var provider = _providerService.Get(model.ProviderId.Value);
 
         if (provider == null)
             return NotFound($"Provider with id '{model.ProviderId}' was not found");

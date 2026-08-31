@@ -37,7 +37,7 @@ public class AccountController: Controller
 
         var email = ClaimsHelper.GetValue(User.Claims, ClaimTypes.Email);
 
-        var user = _accountService.GetAccount(email, provider);
+        var user = _accountService.Get(email, provider);
 
         var account = new AccountResource(user);
 
@@ -50,7 +50,7 @@ public class AccountController: Controller
     {
         if (_instanceOptions.Public)
         {
-            var user = _accountService.CreatePublicAccount(model.Email, model.Password);
+            var user = _accountService.AddPublic(model.Email, model.Password);
 
             if (user == null)
             {
@@ -59,7 +59,7 @@ public class AccountController: Controller
         }
         else
         {
-            var user = _accountService.CreatePrivateAccount(model.Email, model.Password);
+            var user = _accountService.AddPrivate(model.Email, model.Password);
 
             if (user == null)
             {
@@ -84,7 +84,7 @@ public class AccountController: Controller
 
         var email = ClaimsHelper.GetValue(User.Claims, ClaimTypes.Email);
 
-        var deleted = _accountService.DeleteAccount(email, provider);
+        var deleted = _accountService.Delete(email, provider);
 
         if (deleted == false)
         {

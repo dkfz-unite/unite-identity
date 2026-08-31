@@ -9,14 +9,22 @@ public class AccountService
 {
     private readonly IdentityDbContext _dbContext;
     private readonly UserService _userService;
+    private readonly UserDataService _userDataService;
     private readonly ProviderService _providerService;
 
-    public AccountService(IdentityDbContext dbContext, UserService userService, ProviderService providerService)
+
+    public AccountService(
+        IdentityDbContext dbContext,
+        UserService userService,
+        UserDataService userDataService,
+        ProviderService providerService)
     {
         _dbContext = dbContext;
         _userService = userService;
+        _userDataService = userDataService;
         _providerService = providerService;
     }
+
 
     /// <summary>
     /// Returns user with specified email and provider.
@@ -24,7 +32,7 @@ public class AccountService
     /// <param name="email">User email.</param>
     /// <param name="provider">User provider.</param>
     /// <returns>Found user or null if user is not in access list or not registered.</returns>
-    public User GetAccount(string email, string provider)
+    public User Get(string email, string provider)
     {
         return GetUser(email, provider, true);
     }
@@ -37,26 +45,21 @@ public class AccountService
     /// <param name="email">User email.</param>
     /// <param name="password">User password.</param>
     /// <returns>Created user or null if user is not in access list or already registered.</returns>
-    public User CreatePrivateAccount(string email, string password)
+    public User AddPrivate(string email, string password)
     {
         var passwordHash = PasswordHelpers.GetPasswordHash(password);
 
-        var user = GetUser(email, Providers.Default, false);
-
-        if (user != null)
-        {
-            user.Password = passwordHash;
-            user.IsActive = true;
-
-            _dbContext.Update(user);
-            _dbContext.SaveChanges();
-
-            return user;
-        }
-        else
-        {
+        var entity = GetUser(email, Providers.Default, false);
+        if (entity == null)
             return null;
-        }
+
+        entity.Password = passwordHash;
+        entity.IsActive = true;
+
+        _dbContext.Update(entity);
+        _dbContext.SaveChanges();
+
+        return entity;
     }
 
     /// <summary>
@@ -67,29 +70,24 @@ public class AccountService
     /// <param name="email">User email.</param>
     /// <param name="password">User password.</param>
     /// <returns>Created user or null if user already registered.</returns>
-    public User CreatePublicAccount(string email, string password)
+    public User AddPublic(string email, string password)
     {
         var passwordHash = PasswordHelpers.GetPasswordHash(password);
 
-        var user = GetUser(email, Providers.Default);
-
-        if (user == null)
-        {
-            var provider = GetProvider(Providers.Default);
-
-            user = _userService.Add(email, provider.Id, true, false);
-
-            user.Password = passwordHash;
-
-            _dbContext.Update(user);
-            _dbContext.SaveChanges();
-
-            return user;
-        }
-        else
-        {
+        var entity = GetUser(email, Providers.Default);
+        if (entity != null)
             return null;
-        }
+
+        var provider = GetProvider(Providers.Default);
+
+        entity = _userService.Add(email, provider.Id, true, false);
+
+        entity.Password = passwordHash;
+
+        _dbContext.Update(entity);
+        _dbContext.SaveChanges();
+
+        return entity;
     }
 
     /// <summary>
@@ -98,18 +96,31 @@ public class AccountService
     /// <param name="email">User email.</param>
     /// <param name="provider">User provider.</param>
     /// <returns>True if user was deleted. False otherwise.</returns>
-    public bool DeleteAccount(string email, string provider)
+    public bool Delete(string email, string provider)
     {
-        var user = GetUser(email, provider, true);
+        var entity = GetUser(email, provider, true);
+        if (entity == null)
+            return false;
 
-        if (user != null)
+        _userDataService.DeleteAnalysesForUser(entity.Email);
+        _userDataService.DeleteDatasetsForUser(entity.Email);
+        _userService.Delete(entity);
+        return true;
+    }
+
+    /// <summary>
+    /// Deletes all users that are inactive for specified retention period.
+    /// </summary>
+    /// <param name="retentionPeriod">Retention period in days.</param>
+    public void DeleteInactive(int retentionPeriod)
+    {
+        var entities = _userService.GetAll(user => user.LastActive < DateTime.UtcNow.AddDays(-retentionPeriod));
+
+        foreach (var entity in entities)
         {
-            _userService.Delete(user.Id);
-
-            return true;
+            // Call this method as it should remove underlying data as well.
+            Delete(entity.Email, entity.Provider.Name);
         }
-
-        return false;
     }
 
     /// <summary>
@@ -124,42 +135,42 @@ public class AccountService
         var oldPasswordHash = PasswordHelpers.GetPasswordHash(oldPassword);
         var newPasswordHash = PasswordHelpers.GetPasswordHash(newPassword);
 
-        var user = GetUser(email, Providers.Default, true);
+        var entity = GetUser(email, Providers.Default, true);
 
-        if (user == null)
+        if (entity == null)
             return null;
 
-        if (user.Password != oldPasswordHash)
+        if (entity.Password != oldPasswordHash)
             return null;
 
-        user.Password = newPasswordHash;
+        entity.Password = newPasswordHash;
 
-        _dbContext.Update(user);
+        _dbContext.Update(entity);
         _dbContext.SaveChanges();
 
-        return user;
+        return entity;
     }
 
 
     private Provider GetProvider(string name)
     {
-        return _providerService.GetProvider(entity => entity.Name == name && entity.IsActive == true);
+        return _providerService.Get(entity => entity.Name == name && entity.IsActive == true);
     }
 
     private User GetUser(string email, string provider)
     {
-        return _userService.GetUser(user => 
-            user.Provider.Name == provider && 
-            user.Email == email
+        return _userService.Get(entity => 
+            entity.Provider.Name == provider && 
+            entity.Email == email
         );
     }
 
     private User GetUser(string email, string provider, bool isActive)
     {
-        return _userService.GetUser(user => 
-            user.Provider.Name == provider && 
-            user.Email == email && 
-            user.IsActive == isActive
+        return _userService.Get(entity => 
+            entity.Provider.Name == provider && 
+            entity.Email == email && 
+            entity.IsActive == isActive
         );
     }
 }
