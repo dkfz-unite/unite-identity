@@ -47,7 +47,7 @@ public class AccountService
     /// <returns>Created user or null if user is not in access list or already registered.</returns>
     public User AddPrivate(string email, string password)
     {
-        var passwordHash = PasswordHelpers.GetPasswordHash(password);
+        var passwordHash = PasswordHelper.GetPasswordHash(password);
 
         var entity = GetUser(email, Providers.Default, false);
         if (entity == null)
@@ -72,7 +72,7 @@ public class AccountService
     /// <returns>Created user or null if user already registered.</returns>
     public User AddPublic(string email, string password)
     {
-        var passwordHash = PasswordHelpers.GetPasswordHash(password);
+        var passwordHash = PasswordHelper.GetPasswordHash(password);
 
         var entity = GetUser(email, Providers.Default);
         if (entity != null)
@@ -132,8 +132,8 @@ public class AccountService
     /// <returns>Updated user or null if user is not in access list or not registered yet.</returns>
     public User ChangePassword(string email, string newPassword, string oldPassword)
     {
-        var oldPasswordHash = PasswordHelpers.GetPasswordHash(oldPassword);
-        var newPasswordHash = PasswordHelpers.GetPasswordHash(newPassword);
+        var oldPasswordHash = PasswordHelper.GetPasswordHash(oldPassword);
+        var newPasswordHash = PasswordHelper.GetPasswordHash(newPassword);
 
         var entity = GetUser(email, Providers.Default, true);
 
@@ -149,6 +149,67 @@ public class AccountService
         _dbContext.SaveChanges();
 
         return entity;
+    }
+
+    /// <summary>
+    /// Requests password reset token.
+    /// Possible only for 'Default' identity provider.
+    /// </summary>
+    /// <param name="email">User email.</param>
+    /// <returns>Password reset token or null if user is not found.</returns>
+    public string RequestPasswordReset(string email)
+    {
+        var entity = GetUser(email, Providers.Default, true);
+        if (entity == null)
+            return null;
+
+        var token = Guid.NewGuid().ToString();
+        entity.PasswordToken = PasswordHelper.GetPasswordHash(token);
+        entity.PasswordTokenExpires = DateTime.UtcNow.AddMinutes(30);
+
+        _dbContext.Update(entity);
+        _dbContext.SaveChanges();
+        
+        return token;
+    }
+
+    /// <summary>
+    /// Confirms password reset using the provided token and sets the new password.
+    /// Possible only for 'Default' identity provider.
+    /// </summary>
+    /// <param name="token">Password reset token.</param>
+    /// <param name="password">New password.</param>
+    /// <returns>Updated user or null if token is invalid or expired.</returns>
+    public User ConfirmPasswordReset(string token, string password)
+    {
+        var tokenHash = PasswordHelper.GetPasswordHash(token);
+        var passwordHash = PasswordHelper.GetPasswordHash(password);
+
+         var entity = GetUserByToken(tokenHash);
+         if (entity == null)
+             return null;
+
+        if (entity.PasswordTokenExpires > DateTime.UtcNow)
+        {
+            entity.PasswordToken = null;
+            entity.PasswordTokenExpires = null;
+
+            _dbContext.Update(entity);
+            _dbContext.SaveChanges();
+
+            return null;
+        }
+        else
+        {
+            entity.Password = passwordHash;
+            entity.PasswordToken = null;
+            entity.PasswordTokenExpires = null;
+
+            _dbContext.Update(entity);
+            _dbContext.SaveChanges();
+
+            return entity;
+        }
     }
 
 
@@ -171,6 +232,13 @@ public class AccountService
             entity.Provider.Name == provider && 
             entity.Email == email && 
             entity.IsActive == isActive
+        );
+    }
+
+    private User GetUserByToken(string tokenHash)
+    {
+       return _userService.Get(entity =>
+            entity.PasswordToken == tokenHash
         );
     }
 }

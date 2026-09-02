@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Unite.Identity.Helpers;
 
-public static class PasswordHelpers
+public static class PasswordHelper
 {
     public static string GetPasswordHash(string value)
     {

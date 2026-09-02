@@ -108,4 +108,38 @@ public class AccountController: Controller
 
         return Ok();
     }
+
+    [HttpPost("password-reset")]
+    [AllowAnonymous]
+    public IActionResult RequestPasswordReset([FromBody]ResetPasswordRequestModel model)
+    {
+        var token = _accountService.RequestPasswordReset(model.Email);
+
+        if (token != null)
+        {
+            // TODO: Send token via email.
+        }
+        else
+        {
+            _logger.LogWarning("Password reset requested for non-existent email: {Email}", model.Email);
+        }
+
+        return Ok("Password reset link has been sent if the email exists");
+    }
+
+    [HttpPost("password-reset-confirm")]
+    [AllowAnonymous]
+    public IActionResult ConfirmPasswordReset([FromBody]ResetPasswordConfirmationModel model)
+    {
+        var user = _accountService.ConfirmPasswordReset(model.Token, model.Password);
+
+        if (user != null)
+        {
+            return Ok("Password has been successfully reset");
+        }
+        else
+        {
+            return BadRequest("Could not reset password");
+        }
+    }
 }
