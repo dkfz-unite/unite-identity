@@ -118,6 +118,8 @@ public class AccountController: Controller
         if (token != null)
         {
             // TODO: Send token via email.
+            // Remove logging after email implementation, no sensitive information should be logged.
+            _logger.LogInformation("Token generated for '{email}': {token}", model.Email, token);
         }
         else
         {
