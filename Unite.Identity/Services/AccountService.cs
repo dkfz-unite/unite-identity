@@ -114,7 +114,10 @@ public class AccountService
     /// <param name="retentionPeriod">Retention period in days.</param>
     public void DeleteInactive(int retentionPeriod)
     {
-        var entities = _userService.GetAll(user => user.LastActive < DateTime.UtcNow.AddDays(-retentionPeriod));
+        var entities = _userService.GetAll(user =>
+            user.LastActive < DateTime.UtcNow.AddDays(-retentionPeriod) &&
+            user.IsRoot == false
+        );
 
         foreach (var entity in entities)
         {
@@ -189,7 +192,7 @@ public class AccountService
          if (entity == null)
              return null;
 
-        if (entity.PasswordTokenExpires > DateTime.UtcNow)
+        if (entity.PasswordTokenExpires < DateTime.UtcNow)
         {
             entity.PasswordToken = null;
             entity.PasswordTokenExpires = null;

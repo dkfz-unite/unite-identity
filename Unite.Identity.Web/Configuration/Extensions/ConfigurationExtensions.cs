@@ -3,7 +3,6 @@ using FluentValidation.AspNetCore;
 using Unite.Cache.Configuration.Options;
 using Unite.Data.Context;
 using Unite.Identity.Data.Services;
-using Unite.Identity.Data.Services.Configuration.Options;
 using Unite.Identity.Services;
 using Unite.Identity.Services.Ldap;
 using Unite.Identity.Services.Ldap.Configuration.Options;
@@ -11,6 +10,11 @@ using Unite.Identity.Web.Configuration.Options;
 using Unite.Identity.Web.Models;
 using Unite.Identity.Web.Models.Validators;
 using Unite.Identity.Web.Workers;
+
+using IIdentitySeqlOptions = Unite.Identity.Data.Services.Configuration.Options.ISqlOptions;
+using IDomainSeqlOptions = Unite.Data.Context.Configuration.Options.ISqlOptions;
+using Unite.Post.Configuration.Options;
+using Unite.Post;
 
 namespace Unite.Identity.Web.Configuration.Extensions;
 
@@ -33,6 +37,7 @@ public static class ConfigurationExtensions
         services.AddTransient<LdapIdentityService>();
         services.AddTransient<DefaultIdentityService>();
         services.AddTransient<AccountService>();
+        services.AddTransient<MailService>();
         
         services.AddHostedService<RootWorker>();
         services.AddHostedService<AccountWorker>();
@@ -40,8 +45,12 @@ public static class ConfigurationExtensions
 
     private static void AddOptions(this IServiceCollection services)
     {
-        services.AddTransient<ISqlOptions, SqlOptions>();
+        services.AddTransient<IIdentitySeqlOptions, SqlOptions>();
+        services.AddTransient<IDomainSeqlOptions, SqlOptions>();
         services.AddTransient<IMongoOptions, MongoOptions>();
+        services.AddTransient<ISmtpOptions, SmtpOptions>();
+        services.AddTransient<RetentionOptions>();
+        services.AddTransient<InstanceOptions>();
         services.AddTransient<ApiOptions>();
         services.AddTransient<AdminOptions>();
         services.AddTransient<DefaultProviderOptions>();

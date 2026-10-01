@@ -7,6 +7,7 @@ using Unite.Identity.Web.Helpers;
 using Unite.Identity.Web.Models;
 using Unite.Identity.Web.Configuration.Constants;
 using Unite.Identity.Web.Configuration.Options;
+using Unite.Post;
 
 namespace Unite.Identity.Web.Controllers;
 
@@ -15,16 +16,19 @@ namespace Unite.Identity.Web.Controllers;
 public class AccountController: Controller
 {
     private readonly AccountService _accountService;
+    private readonly MailService _mailService;
     private readonly InstanceOptions _instanceOptions;
     private readonly ILogger _logger;
 
 
     public AccountController(
         AccountService accountService,
+        MailService mailService,
         InstanceOptions instanceOptions,
         ILogger<AccountController> logger)
     {
         _accountService = accountService;
+        _mailService = mailService;
         _instanceOptions = instanceOptions;
         _logger = logger;
     }
@@ -119,6 +123,8 @@ public class AccountController: Controller
         {
             // TODO: Send token via email.
             // Remove logging after email implementation, no sensitive information should be logged.
+            var data = new Post.Mails.PasswordReset { Host = _instanceOptions.Host, Token = token };
+            _mailService.SendPasswordResetMail(model.Email, data);
             _logger.LogInformation("Token generated for '{email}': {token}", model.Email, token);
         }
         else

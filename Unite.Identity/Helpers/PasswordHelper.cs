@@ -8,9 +8,11 @@ public static class PasswordHelper
 {
     public static string GetPasswordHash(string value)
     {
-        var hasher = new PasswordHasher<string>();
+        return GetPasswordHasOld(value);
 
-        return hasher.HashPassword(null, value);
+        // var hasher = new PasswordHasher<string>();
+
+        // return hasher.HashPassword(null, value);
     }
 
     public static string GetPasswordHasOld(string value)

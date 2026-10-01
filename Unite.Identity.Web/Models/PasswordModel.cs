@@ -1,5 +1,6 @@
 namespace Unite.Identity.Web.Models;
 
+// TODO: Add validation
 public class ChangePasswordModel
 {
     public string OldPassword { get; set; }

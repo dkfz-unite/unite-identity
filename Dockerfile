@@ -1,4 +1,9 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libgssapi-krb5-2 \
+        gss-ntlmssp \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 ENV ASPNETCORE_HTTP_PORTS=80
 # ENV ASPNETCORE_HTTPS_PORTS=443
@@ -15,7 +20,7 @@ COPY ["Unite.Identity.Web/Unite.Identity.Web.csproj", "Unite.Identity.Web/"]
 RUN dotnet restore "Unite.Identity/Unite.Identity.csproj"
 RUN dotnet restore "Unite.Identity.Web/Unite.Identity.Web.csproj"
 
-FROM restore as build
+FROM restore AS build
 COPY . .
 WORKDIR "/src/Unite.Identity.Web"
 RUN dotnet build "Unite.Identity.Web.csproj" -c Release
