@@ -5,6 +5,7 @@ public interface ISmtpOptions
     string Host { get; }
     int Port { get; }
     bool EnableSsl { get; }
+    SmtpLoginMethod LoginMethod { get; }
     string Domain { get; }
     string User { get; }
     string Password { get; }

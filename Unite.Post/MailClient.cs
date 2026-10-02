@@ -1,7 +1,9 @@
 using System.Net;
-using System.Net.Mail;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 using Unite.Post.Configuration.Options;
 
 namespace Unite.Post;
@@ -20,15 +22,18 @@ public class MailClient
 
     public void Send(string recipient, string subject, string template, IReadOnlyDictionary<string, string> data)
     {
-        using var client = CreateClient();
+        using var message = new MimeMessage();
+        message.Subject = subject;
+        message.Body = new TextPart("html") { Text = RenderTemplate(template, data) };
+        message.From.Add(MailboxAddress.Parse(_smtpOptions.Sender));
+        message.To.Add(MailboxAddress.Parse(recipient));
 
-        var message = new MailMessage(_smtpOptions.Sender, recipient)
-        {
-            Subject = subject,
-            Body = RenderTemplate(template, data)
-        };
+        using var client = new SmtpClient();
+        client.Connect(_smtpOptions.Host, _smtpOptions.Port, _smtpOptions.EnableSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.None);
 
+        Login(client);
         client.Send(message);
+        client.Disconnect(true);
     }
 
     public void Send<T>(string recipient, string subject, T mail) where T : class
@@ -39,14 +44,22 @@ public class MailClient
     }
 
 
-    private SmtpClient CreateClient()
+    private void Login(SmtpClient client)
     {
-        return new SmtpClient(_smtpOptions.Host, _smtpOptions.Port)
+        var method = _smtpOptions.LoginMethod;
+
+        SaslMechanism mechanism = method switch
         {
-            EnableSsl = _smtpOptions.EnableSsl,
-            UseDefaultCredentials = false,
-            Credentials = new NetworkCredential(_smtpOptions.User, _smtpOptions.Password, _smtpOptions.Domain)
+            SmtpLoginMethod.Login => new SaslMechanismLogin(_smtpOptions.User, _smtpOptions.Password),
+            SmtpLoginMethod.Plain => new SaslMechanismPlain(_smtpOptions.User, _smtpOptions.Password),
+            SmtpLoginMethod.Ntlm => new SaslMechanismNtlm(new NetworkCredential(_smtpOptions.User, _smtpOptions.Password, _smtpOptions.Domain)) { AllowChannelBinding = true },
+            _ => throw new InvalidOperationException($"Unsupported SMTP login method '{method}'.")
         };
+
+        if (!client.AuthenticationMechanisms.Contains(mechanism.MechanismName))
+            throw new InvalidOperationException($"SMTP server does not advertise '{mechanism.MechanismName}' authentication.");
+
+        client.Authenticate(mechanism);
     }
 
     public static string GetTemplate(Type type)
@@ -61,7 +74,7 @@ public class MailClient
         return reader.ReadToEnd();
     }
 
-    public static  Dictionary<string, string> GetData<T>(T data) where T : class
+    public static Dictionary<string, string> GetData<T>(T data) where T : class
     {
         var dictionary = new Dictionary<string, string>();
 
