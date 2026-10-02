@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Unite.Essentials.Attributes;
 using Unite.Post.Configuration.Options;
 
@@ -44,10 +43,10 @@ public class SmtpOptions : ISmtpOptions
             if (string.IsNullOrEmpty(option))
                 throw new InvalidOperationException("UNITE_SMTP_SSL_ENABLE environment variable is not set.");
 
-            if (!bool.TryParse(option, out var enableSsl))
+            if (!bool.TryParse(option, out var value))
                 throw new InvalidOperationException("UNITE_SMTP_SSL_ENABLE environment variable is not a valid boolean.");
 
-            return enableSsl;
+            return value;
         }
     }
 
