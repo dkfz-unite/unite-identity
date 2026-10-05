@@ -6,8 +6,10 @@ using Unite.Identity.Services;
 using Unite.Identity.Web.Helpers;
 using Unite.Identity.Web.Models;
 using Unite.Identity.Web.Configuration.Constants;
+using Unite.Identity.Web.Configuration.Extensions;
 using Unite.Identity.Web.Configuration.Options;
 using Unite.Post;
+using Unite.Post.Configuration.Options;
 
 namespace Unite.Identity.Web.Controllers;
 
@@ -18,6 +20,7 @@ public class AccountController: Controller
     private readonly AccountService _accountService;
     private readonly MailService _mailService;
     private readonly InstanceOptions _instanceOptions;
+    private readonly ISmtpOptions _smtpOptions;
     private readonly ILogger _logger;
 
 
@@ -25,11 +28,13 @@ public class AccountController: Controller
         AccountService accountService,
         MailService mailService,
         InstanceOptions instanceOptions,
+        ISmtpOptions smtpOptions,
         ILogger<AccountController> logger)
     {
         _accountService = accountService;
         _mailService = mailService;
         _instanceOptions = instanceOptions;
+        _smtpOptions = smtpOptions;
         _logger = logger;
     }
 
@@ -119,6 +124,11 @@ public class AccountController: Controller
     [AllowAnonymous]
     public IActionResult RequestPasswordReset([FromBody]ResetPasswordRequestModel model)
     {
+        if (!IsSmtpConfigured(out var result))
+        {
+            return result;
+        }
+
         var token = _accountService.RequestPasswordReset(model.Email);
 
         if (token != null)
@@ -139,6 +149,11 @@ public class AccountController: Controller
     [AllowAnonymous]
     public IActionResult ConfirmPasswordReset([FromBody]ResetPasswordConfirmationModel model)
     {
+        if (!IsSmtpConfigured(out var result))
+        {
+            return result;
+        }
+
         var user = _accountService.ConfirmPasswordReset(model.Token, model.Password);
 
         if (user != null)
@@ -149,5 +164,23 @@ public class AccountController: Controller
         {
             return BadRequest("Could not reset password");
         }
+    }
+
+
+    private bool IsSmtpConfigured(out IActionResult result)
+    {
+        result = null;
+
+        if (_smtpOptions.IsConfigured())
+        {
+            return true;
+        }
+
+        _logger.LogWarning("Password reset attempted, but SMTP is not configured");
+
+        result = StatusCode(StatusCodes.Status503ServiceUnavailable,
+            "Password reset is unavailable on this instance.");
+
+        return false;
     }
 }

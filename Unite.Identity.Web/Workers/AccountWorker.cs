@@ -42,6 +42,10 @@ public class AccountWorker : BackgroundService
                 _sessionService.DeleteExpired();
                 _accountService.DeleteInactive(_retentionOptions.Period);
             }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Account cleanup failed");
+            }
             finally
             {
                 await Task.Delay(_interval, cancellationToken);

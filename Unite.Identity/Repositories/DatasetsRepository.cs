@@ -1,9 +1,11 @@
+using MongoDB.Bson.Serialization.Attributes;
 using Unite.Cache.Configuration.Options;
 using Unite.Cache.Repositories;
 
 namespace Unite.Identity.Repositories;
 
-internal record DatasetRecord(string Id, string UserId);
+[BsonIgnoreExtraElements]
+internal record DatasetRecord(string UserId);
 
 internal class DatasetsRepository : CacheRepository<DatasetRecord>
 {

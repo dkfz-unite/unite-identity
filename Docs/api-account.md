@@ -34,6 +34,7 @@ Loads account data.
 - `401` - missing JWT token
 - `403` - missing required permissions
 
+
 ### Resources
 ```jsonc
 {
@@ -71,3 +72,41 @@ Changes account password.
 - `400` - request data didn't pass validation
 - `401` - missing JWT token
 - `403` - missing required permissions
+
+
+## POST: api/account/password-reset
+
+Requests a password reset email. No authentication is required.
+
+### Body - application/json
+```json
+{
+    "email": "test@mail.com"
+}
+```
+
+### Responses
+- `200` - request was processed; the same response is returned whether the account exists or not
+- `400` - request data didn't pass validation
+- `503` - password reset is disabled because no SMTP host is configured; no token is generated
+
+
+## POST: api/account/password-reset-confirm
+
+Consumes a valid, unexpired reset token and sets a new password. No authentication is required. Successful reset removes the user's existing sessions.
+
+### Body - application/json
+```json
+{
+    "token": "password-reset-token",
+    "password": "Long-Pa55w0rd",
+    "passwordRepeat": "Long-Pa55w0rd"
+}
+```
+
+The new password must satisfy the password requirements above, and both password fields must match.
+
+### Responses
+- `200` - password was reset successfully
+- `400` - request data or reset token is invalid, or the token has expired
+- `503` - password reset is disabled because no SMTP host is configured; the password is not changed

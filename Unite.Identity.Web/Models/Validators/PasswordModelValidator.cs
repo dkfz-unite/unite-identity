@@ -52,9 +52,11 @@ public class ResetPasswordConfirmationModelValidator : AbstractValidator<ResetPa
             .NotEmpty().WithMessage("Should not be empty");
 
         RuleFor(model => model.Password)
+            .NotEmpty().WithMessage("Should not be empty")
             .SetValidator(_passwordValidator);
 
         RuleFor(model => model.PasswordRepeat)
+            .NotEmpty().WithMessage("Should not be empty")
             .SetValidator(_passwordValidator);
 
         RuleFor(model => model)

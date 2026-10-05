@@ -11,10 +11,7 @@ public class SmtpOptions : ISmtpOptions
         {
             var option = Environment.GetEnvironmentVariable("UNITE_SMTP_HOST");
 
-            if (string.IsNullOrWhiteSpace(option))
-                throw new InvalidOperationException("UNITE_SMTP_HOST environment variable is not set.");
-
-            return option.Trim();
+            return string.IsNullOrWhiteSpace(option) ? null : option.Trim();
         }
     }
 

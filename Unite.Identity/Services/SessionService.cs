@@ -19,7 +19,8 @@ public class SessionService
     {
         return Get(entity =>
             entity.UserId == userId &&
-            entity.Session == session
+            entity.Session == session &&
+            entity.Expires > DateTime.UtcNow
         );
     }
 

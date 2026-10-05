@@ -72,5 +72,7 @@ public static class ConfigurationExtensions
         services.AddTransient<IValidator<IdentityModel>, IdentityModelValidator>();
         services.AddTransient<IValidator<CreateAccountModel>, CreateAccountModelValidator>();
         services.AddTransient<IValidator<ChangePasswordModel>, ChangePasswordModelValidator>();
+        services.AddTransient<IValidator<ResetPasswordRequestModel>, ResetPasswordRequestModelValidator>();
+        services.AddTransient<IValidator<ResetPasswordConfirmationModel>, ResetPasswordConfirmationModelValidator>();
     }
 }

@@ -11,18 +11,21 @@ public class AccountService
     private readonly UserService _userService;
     private readonly UserDataService _userDataService;
     private readonly ProviderService _providerService;
+    private readonly SessionService _sessionService;
 
 
     public AccountService(
         IdentityDbContext dbContext,
         UserService userService,
         UserDataService userDataService,
-        ProviderService providerService)
+        ProviderService providerService,
+        SessionService sessionService)
     {
         _dbContext = dbContext;
         _userService = userService;
         _userDataService = userDataService;
         _providerService = providerService;
+        _sessionService = sessionService;
     }
 
 
@@ -210,6 +213,9 @@ public class AccountService
 
             _dbContext.Update(entity);
             _dbContext.SaveChanges();
+
+            var sessions = _sessionService.GetAll(session => session.UserId == entity.Id);
+            _sessionService.DeleteAll(sessions);
 
             return entity;
         }

@@ -20,18 +20,17 @@ public class UserDataService
     public void DeleteDatasetsForUser(string id)
     {
         var entries = _datasetsRepository.Where(entry => string.Equals(entry.Document.UserId, id));
-        var entryIds = entries.Select(entry => entry.Document.Id).ToArray();
+        var entryIds = entries.Select(entry => entry.Id).ToArray();
         
         _datasetsRepository.DeleteMany(entryIds);
     }
 
     public void DeleteAnalysesForUser(string id)
     {
-        var enties = _analysesRepository.Where(entry => string.Equals(entry.Document.UserId, id));
-        var entryIds = enties.Select(entry => entry.Document.Id).ToArray();
-        var documentIds = enties.Select(entry => entry.Document.Id).ToArray();
+        var entries = _analysesRepository.Where(entry => string.Equals(entry.Document.UserId, id));
+        var entryIds = entries.Select(entry => entry.Id).ToArray();
         var tasks = _dbContext.Set<Unite.Data.Entities.Tasks.Task>()
-            .Where(task => task.AnalysisTypeId != null && documentIds.Contains(task.Target))
+            .Where(task => task.AnalysisTypeId != null && entryIds.Contains(task.Target))
             .ToArray();
 
         _analysesRepository.DeleteMany(entryIds);
