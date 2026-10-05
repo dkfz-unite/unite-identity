@@ -123,11 +123,9 @@ public class AccountController: Controller
 
         if (token != null)
         {
-            // TODO: Send token via email.
-            // Remove logging after email implementation, no sensitive information should be logged.
             var data = new Post.Mails.PasswordReset { Host = _instanceOptions.Host, Token = token };
+            
             _mailService.SendPasswordResetMail(model.Email, data);
-            _logger.LogInformation("Token generated for '{email}': {token}", model.Email, token);
         }
         else
         {
