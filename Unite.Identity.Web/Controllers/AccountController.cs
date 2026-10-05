@@ -95,6 +95,8 @@ public class AccountController: Controller
             return NotFound();
         }
 
+        CookieHelper.DeleteSessionCookie(Response);
+        
         return Ok();
     }
 
