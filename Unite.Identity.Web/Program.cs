@@ -1,7 +1,7 @@
 ﻿using Unite.Identity.Web.Configuration.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
-AppContext.SetSwitch("System.Net.Security.UseManagedNtlm", true);
+// AppContext.SetSwitch("System.Net.Security.UseManagedNtlm", true);
 
 var builder = WebApplication.CreateBuilder(args);
 

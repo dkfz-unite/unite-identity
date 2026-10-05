@@ -70,7 +70,7 @@ public class SessionService
 
     public void DeleteAll(params UserSession[] entities)
     {
-        _dbContext.Remove(entities);
+        _dbContext.RemoveRange(entities);
         _dbContext.SaveChanges();
     }
 
