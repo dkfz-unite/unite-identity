@@ -1,9 +1,9 @@
 ﻿namespace Unite.Identity.Web.Configuration.Options;
 
 using IIdentitySeqlOptions = Unite.Identity.Data.Services.Configuration.Options.ISqlOptions;
-using IDomainSeqlOptions = Unite.Data.Context.Configuration.Options.ISqlOptions;
+using IDomainSqlOptions = Unite.Data.Context.Configuration.Options.ISqlOptions;
 
-public class SqlOptions : IIdentitySeqlOptions, IDomainSeqlOptions
+public class SqlOptions : IIdentitySeqlOptions, IDomainSqlOptions
 {
     public string Host => Environment.GetEnvironmentVariable("UNITE_SQL_HOST");
     public string Port => Environment.GetEnvironmentVariable("UNITE_SQL_PORT");
