@@ -8,13 +8,12 @@ public static class PasswordHelper
 {
     public static string GetPasswordHash(string value)
     {
-        return GetPasswordHasOld(value);
+        var hasher = new PasswordHasher<string>();
 
-        // var hasher = new PasswordHasher<string>();
-
-        // return hasher.HashPassword(null, value);
+        return hasher.HashPassword(null, value);
     }
 
+    // Legacy MD5 hash method, not used anymore but kept for reference.
     public static string GetPasswordHasOld(string value)
     {
         var md5 = MD5.Create();
