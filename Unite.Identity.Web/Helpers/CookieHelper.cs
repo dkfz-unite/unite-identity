@@ -3,8 +3,6 @@
 public class CookieHelper
 {
     public const string SESSION_COOKIE_NAME = "unite_session";
-    public const int SESSION_EXPIRY_DAYS = 30;
-
 
     public static string GetSessionCookie(HttpRequest request)
     {
@@ -18,11 +16,11 @@ public class CookieHelper
         }
     }
 
-    public static void SetSessionCookie(HttpResponse response, string session)
+    public static void SetSessionCookie(HttpResponse response, string session, DateTime expiryDate)
     {
         var options = new CookieOptions
         {
-            Expires = DateTimeOffset.UtcNow.AddDays(SESSION_EXPIRY_DAYS),
+            Expires = expiryDate,
             SameSite = SameSiteMode.Lax,
             HttpOnly = true,
             Secure = true,

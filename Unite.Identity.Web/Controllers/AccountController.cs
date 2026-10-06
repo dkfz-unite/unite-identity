@@ -6,6 +6,10 @@ using Unite.Identity.Services;
 using Unite.Identity.Web.Helpers;
 using Unite.Identity.Web.Models;
 using Unite.Identity.Web.Configuration.Constants;
+using Unite.Identity.Web.Configuration.Extensions;
+using Unite.Identity.Web.Configuration.Options;
+using Unite.Post;
+using Unite.Post.Configuration.Options;
 
 namespace Unite.Identity.Web.Controllers;
 
@@ -14,14 +18,23 @@ namespace Unite.Identity.Web.Controllers;
 public class AccountController: Controller
 {
     private readonly AccountService _accountService;
+    private readonly MailService _mailService;
+    private readonly InstanceOptions _instanceOptions;
+    private readonly ISmtpOptions _smtpOptions;
     private readonly ILogger _logger;
 
 
     public AccountController(
-        AccountService accountService, 
+        AccountService accountService,
+        MailService mailService,
+        InstanceOptions instanceOptions,
+        ISmtpOptions smtpOptions,
         ILogger<AccountController> logger)
     {
         _accountService = accountService;
+        _mailService = mailService;
+        _instanceOptions = instanceOptions;
+        _smtpOptions = smtpOptions;
         _logger = logger;
     }
 
@@ -33,7 +46,7 @@ public class AccountController: Controller
 
         var email = ClaimsHelper.GetValue(User.Claims, ClaimTypes.Email);
 
-        var user = _accountService.GetAccount(email, provider);
+        var user = _accountService.Get(email, provider);
 
         var account = new AccountResource(user);
 
@@ -44,11 +57,23 @@ public class AccountController: Controller
     [AllowAnonymous]
     public IActionResult CreateAccount([FromBody]CreateAccountModel model)
     {
-        var user = _accountService.CreateAccount(model.Email, model.Password);
-
-        if (user == null)
+        if (_instanceOptions.Public)
         {
-            return BadRequest("Email address is not in access list or already registered");
+            var user = _accountService.AddPublic(model.Email, model.Password);
+
+            if (user == null)
+            {
+                return BadRequest("Email address is already registered");
+            }
+        }
+        else
+        {
+            var user = _accountService.AddPrivate(model.Email, model.Password);
+
+            if (user == null)
+            {
+                return BadRequest("Email address is not in access list or already registered");
+            }
         }
 
         return Ok();
@@ -68,13 +93,15 @@ public class AccountController: Controller
 
         var email = ClaimsHelper.GetValue(User.Claims, ClaimTypes.Email);
 
-        var deleted = _accountService.DeleteAccount(email, provider);
+        var deleted = _accountService.Delete(email, provider);
 
         if (deleted == false)
         {
             return NotFound();
         }
 
+        CookieHelper.DeleteSessionCookie(Response);
+        
         return Ok();
     }
 
@@ -83,7 +110,7 @@ public class AccountController: Controller
     {
         var email = ClaimsHelper.GetValue(User.Claims, ClaimTypes.Email);
 
-        var user = _accountService.ChangePassword(email, model.NewPassword);
+        var user = _accountService.ChangePassword(email, model.NewPassword, model.OldPassword);
 
         if (user == null)
         {
@@ -91,5 +118,69 @@ public class AccountController: Controller
         }
 
         return Ok();
+    }
+
+    [HttpPost("password-reset")]
+    [AllowAnonymous]
+    public IActionResult RequestPasswordReset([FromBody]ResetPasswordRequestModel model)
+    {
+        if (!IsSmtpConfigured(out var result))
+        {
+            return result;
+        }
+
+        var token = _accountService.RequestPasswordReset(model.Email, _instanceOptions.ResetTokenLifetime);
+
+        if (token != null)
+        {
+            var data = new Post.Mails.PasswordReset { Host = _instanceOptions.Host, Token = token };
+            
+            _mailService.SendPasswordResetMail(model.Email, data);
+        }
+        else
+        {
+            _logger.LogWarning("Password reset requested for non-existent email: {Email}", model.Email);
+        }
+
+        return Ok("Password reset link has been sent if the email exists");
+    }
+
+    [HttpPost("password-reset-confirm")]
+    [AllowAnonymous]
+    public IActionResult ConfirmPasswordReset([FromBody]ResetPasswordConfirmationModel model)
+    {
+        if (!IsSmtpConfigured(out var result))
+        {
+            return result;
+        }
+
+        var user = _accountService.ConfirmPasswordReset(model.Token, model.Password);
+
+        if (user != null)
+        {
+            return Ok("Password has been successfully reset");
+        }
+        else
+        {
+            return BadRequest("Could not reset password");
+        }
+    }
+
+
+    private bool IsSmtpConfigured(out IActionResult result)
+    {
+        result = null;
+
+        if (_smtpOptions.IsConfigured())
+        {
+            return true;
+        }
+
+        _logger.LogWarning("Password reset attempted, but SMTP is not configured");
+
+        result = StatusCode(StatusCodes.Status503ServiceUnavailable,
+            "Password reset is unavailable on this instance.");
+
+        return false;
     }
 }

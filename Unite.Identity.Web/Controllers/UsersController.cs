@@ -32,7 +32,7 @@ public class UsersController : Controller
         var rootUserEmail = _rootOptions.Login;
 
         var users = _userService
-            .GetUsers(user => user.Email != currentUserEmail && user.Email != rootUserEmail)
+            .GetAll(user => user.Email != currentUserEmail && user.Email != rootUserEmail)
             .Select(user => new UserResource(user))
             .ToArray();
 

@@ -1,11 +1,20 @@
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 
 namespace Unite.Identity.Helpers;
 
-public static class PasswordHelpers
+public static class PasswordHelper
 {
     public static string GetPasswordHash(string value)
+    {
+        var hasher = new PasswordHasher<string>();
+
+        return hasher.HashPassword(null, value);
+    }
+
+    // Legacy MD5 hash method, not used anymore but kept for reference.
+    public static string GetPasswordHasOld(string value)
     {
         var md5 = MD5.Create();
 

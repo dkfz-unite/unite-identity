@@ -9,13 +9,25 @@ public class AccountService
 {
     private readonly IdentityDbContext _dbContext;
     private readonly UserService _userService;
+    private readonly UserDataService _userDataService;
+    private readonly ProviderService _providerService;
+    private readonly SessionService _sessionService;
 
 
-    public AccountService(IdentityDbContext dbContext, UserService userService)
+    public AccountService(
+        IdentityDbContext dbContext,
+        UserService userService,
+        UserDataService userDataService,
+        ProviderService providerService,
+        SessionService sessionService)
     {
         _dbContext = dbContext;
         _userService = userService;
+        _userDataService = userDataService;
+        _providerService = providerService;
+        _sessionService = sessionService;
     }
+
 
     /// <summary>
     /// Returns user with specified email and provider.
@@ -23,7 +35,7 @@ public class AccountService
     /// <param name="email">User email.</param>
     /// <param name="provider">User provider.</param>
     /// <returns>Found user or null if user is not in access list or not registered.</returns>
-    public User GetAccount(string email, string provider)
+    public User Get(string email, string provider)
     {
         return GetUser(email, provider, true);
     }
@@ -31,26 +43,54 @@ public class AccountService
     /// <summary>
     /// Registers user with specified email and password.
     /// Possible only for 'Default' identity provider.
+    /// Possible only for users that are in access list and not registered yet.
     /// </summary>
     /// <param name="email">User email.</param>
     /// <param name="password">User password.</param>
     /// <returns>Created user or null if user is not in access list or already registered.</returns>
-    public User CreateAccount(string email, string password)
+    public User AddPrivate(string email, string password)
     {
-        var passwordHash = PasswordHelpers.GetPasswordHash(password);
+        var passwordHash = PasswordHelper.GetPasswordHash(password);
 
-        var user = GetUser(email, Providers.Default, false);
+        var entity = GetUser(email, Providers.Default, false);
+        if (entity == null)
+            return null;
 
-        if (user != null)
-        {
-            user.Password = passwordHash;
-            user.IsActive = true;
+        entity.Password = passwordHash;
+        entity.IsActive = true;
 
-            _dbContext.Update(user);
-            _dbContext.SaveChanges();
-        }
+        _dbContext.Update(entity);
+        _dbContext.SaveChanges();
 
-        return user;
+        return entity;
+    }
+
+    /// <summary>
+    /// Registers user with specified email and password.
+    /// Possible only for 'Default' identity provider.
+    /// Possible only for users that are not registered yet.
+    /// </summary>
+    /// <param name="email">User email.</param>
+    /// <param name="password">User password.</param>
+    /// <returns>Created user or null if user already registered.</returns>
+    public User AddPublic(string email, string password)
+    {
+        var passwordHash = PasswordHelper.GetPasswordHash(password);
+
+        var entity = GetUser(email, Providers.Default);
+        if (entity != null)
+            return null;
+
+        var provider = GetProvider(Providers.Default);
+
+        entity = _userService.Add(email, provider.Id, true, false);
+
+        entity.Password = passwordHash;
+
+        _dbContext.Update(entity);
+        _dbContext.SaveChanges();
+
+        return entity;
     }
 
     /// <summary>
@@ -59,18 +99,34 @@ public class AccountService
     /// <param name="email">User email.</param>
     /// <param name="provider">User provider.</param>
     /// <returns>True if user was deleted. False otherwise.</returns>
-    public bool DeleteAccount(string email, string provider)
+    public bool Delete(string email, string provider)
     {
-        var user = GetUser(email, provider, true);
+        var entity = GetUser(email, provider, true);
+        if (entity == null)
+            return false;
 
-        if (user != null)
+        _userDataService.DeleteAnalysesForUser(entity.Email);
+        _userDataService.DeleteDatasetsForUser(entity.Email);
+        _userService.Delete(entity);
+        return true;
+    }
+
+    /// <summary>
+    /// Deletes all users that are inactive for specified retention period.
+    /// </summary>
+    /// <param name="retentionPeriod">Retention period in days.</param>
+    public void DeleteInactive(int retentionPeriod)
+    {
+        var entities = _userService.GetAll(user =>
+            user.LastActive < DateTime.UtcNow.AddDays(-retentionPeriod) &&
+            user.IsRoot == false
+        );
+
+        foreach (var entity in entities)
         {
-            _userService.Delete(user.Id);
-
-            return true;
+            // Call this method as it should remove underlying data as well.
+            Delete(entity.Email, entity.Provider.Name);
         }
-
-        return false;
     }
 
     /// <summary>
@@ -80,30 +136,119 @@ public class AccountService
     /// <param name="email">User email.</param>
     /// <param name="password">New password.</param>
     /// <returns>Updated user or null if user is not in access list or not registered yet.</returns>
-    public User ChangePassword(string email, string password)
+    public User ChangePassword(string email, string newPassword, string oldPassword)
     {
-        var passwordHash = PasswordHelpers.GetPasswordHash(password);
+        var oldPasswordHash = PasswordHelper.GetPasswordHash(oldPassword);
+        var newPasswordHash = PasswordHelper.GetPasswordHash(newPassword);
 
-        var user = GetUser(email, Providers.Default, true);
+        var entity = GetUser(email, Providers.Default, true);
 
-        if (user != null)
+        if (entity == null)
+            return null;
+
+        if (entity.Password != oldPasswordHash)
+            return null;
+
+        entity.Password = newPasswordHash;
+
+        _dbContext.Update(entity);
+        _dbContext.SaveChanges();
+
+        return entity;
+    }
+
+    /// <summary>
+    /// Requests password reset token.
+    /// Possible only for 'Default' identity provider.
+    /// </summary>
+    /// <param name="email">User email.</param>
+    /// <param name="resetTokenLifetime">Password reset token lifetime in minutes.</param>
+    /// <returns>Password reset token or null if user is not found.</returns>
+    public string RequestPasswordReset(string email, int resetTokenLifetime)
+    {
+        var entity = GetUser(email, Providers.Default, true);
+        if (entity == null)
+            return null;
+
+        var token = Guid.NewGuid().ToString();
+        entity.PasswordToken = PasswordHelper.GetPasswordHash(token);
+        entity.PasswordTokenExpires = DateTime.UtcNow.AddMinutes(resetTokenLifetime);
+
+        _dbContext.Update(entity);
+        _dbContext.SaveChanges();
+        
+        return token;
+    }
+
+    /// <summary>
+    /// Confirms password reset using the provided token and sets the new password.
+    /// Possible only for 'Default' identity provider.
+    /// </summary>
+    /// <param name="token">Password reset token.</param>
+    /// <param name="password">New password.</param>
+    /// <returns>Updated user or null if token is invalid or expired.</returns>
+    public User ConfirmPasswordReset(string token, string password)
+    {
+        var tokenHash = PasswordHelper.GetPasswordHash(token);
+        var passwordHash = PasswordHelper.GetPasswordHash(password);
+
+         var entity = GetUserByToken(tokenHash);
+         if (entity == null)
+             return null;
+
+        if (entity.PasswordTokenExpires < DateTime.UtcNow)
         {
-            user.Password = passwordHash;
+            entity.PasswordToken = null;
+            entity.PasswordTokenExpires = null;
 
-            _dbContext.Update(user);
+            _dbContext.Update(entity);
             _dbContext.SaveChanges();
-        }
 
-        return user;
+            return null;
+        }
+        else
+        {
+            entity.Password = passwordHash;
+            entity.PasswordToken = null;
+            entity.PasswordTokenExpires = null;
+
+            _dbContext.Update(entity);
+            _dbContext.SaveChanges();
+
+            var sessions = _sessionService.GetAll(session => session.UserId == entity.Id);
+            _sessionService.DeleteAll(sessions);
+
+            return entity;
+        }
     }
 
 
+    private Provider GetProvider(string name)
+    {
+        return _providerService.Get(entity => entity.Name == name && entity.IsActive == true);
+    }
+
+    private User GetUser(string email, string provider)
+    {
+        return _userService.Get(entity => 
+            entity.Provider.Name == provider && 
+            entity.Email == email
+        );
+    }
+
     private User GetUser(string email, string provider, bool isActive)
     {
-        return _userService.GetUser(user => 
-            user.Provider.Name == provider && 
-            user.Email == email && 
-            user.IsActive == isActive
+        return _userService.Get(entity => 
+            entity.Provider.Name == provider && 
+            entity.Email == email && 
+            entity.IsActive == isActive
+        );
+    }
+
+    private User GetUserByToken(string tokenHash)
+    {
+       return _userService.Get(entity =>
+            entity.PasswordToken == tokenHash
         );
     }
 }
