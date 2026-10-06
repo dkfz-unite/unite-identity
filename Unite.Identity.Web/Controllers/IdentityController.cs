@@ -11,6 +11,8 @@ namespace Unite.Identity.Web.Controllers;
 
 public abstract class IdentityController<TIdentityService> : Controller where TIdentityService : IIdentityService
 {
+    public const int SESSION_EXPIRY_DAYS = 30;
+
     protected readonly ApiOptions _apiOptions;
     protected readonly UserService _userService;
     protected readonly ProviderService _providerService;
@@ -54,9 +56,9 @@ public abstract class IdentityController<TIdentityService> : Controller where TI
 
         var identity = ClaimsHelper.GetIdentity(user);
 
-        var userSession = _sessionService.CreateSession(user, client);
+        var userSession = _sessionService.Add(user.Id, client, DateTime.UtcNow.AddDays(SESSION_EXPIRY_DAYS));
 
-        CookieHelper.SetSessionCookie(Response, userSession.Session);
+        CookieHelper.SetSessionCookie(Response, userSession.Session, userSession.Expires);
 
         var token = TokenHelper.GenerateAuthorizationToken(identity, _apiOptions.Key);
 
@@ -82,7 +84,7 @@ public abstract class IdentityController<TIdentityService> : Controller where TI
     
         if (session != null)
         {
-            var userSession = _sessionService.FindSession(user, session);
+            var userSession = _sessionService.Get(user.Id, session);
 
             if (userSession == null)
             {
@@ -91,7 +93,7 @@ public abstract class IdentityController<TIdentityService> : Controller where TI
                 return BadRequest();
             }
 
-            _sessionService.RemoveSession(userSession);
+            _sessionService.Delete(userSession);
 
             CookieHelper.DeleteSessionCookie(Response);
         }
@@ -120,9 +122,24 @@ public abstract class IdentityController<TIdentityService> : Controller where TI
             return BadRequest();
         }
 
+        var userSession = FindUserSession(user, session);
+
+        if (userSession == null)
+        {
+            _logger.LogWarning("Invalid attempt to get authorization token for not existing session");
+
+            return BadRequest();
+        }
+
         var identity = ClaimsHelper.GetIdentity(user);
 
         var token = TokenHelper.GenerateAuthorizationToken(identity, _apiOptions.Key);
+
+        _userService.UpdateActivity(user);
+
+        _sessionService.Rotate(userSession);
+
+        CookieHelper.SetSessionCookie(Response, userSession.Session, userSession.Expires);
 
         return Ok(token);
     }
@@ -130,10 +147,15 @@ public abstract class IdentityController<TIdentityService> : Controller where TI
 
     protected User FindUser(string email, bool isActive = true)
     {
-        return _userService.GetUser(user =>
+        return _userService.Get(user =>
             user.Provider.Name == Provider && 
             user.Email == email && 
             user.IsActive == isActive
         );
+    }
+
+    protected UserSession FindUserSession(User user, string session)
+    {
+        return _sessionService.Get(user.Id, session);
     }
 }

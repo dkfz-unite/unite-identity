@@ -22,7 +22,7 @@ public class ProvidersController : Controller
     public IActionResult Get()
     {
         var providers = _providerService
-            .GetProviders(provider => provider.IsActive == true)
+            .GetAll(provider => provider.IsActive == true)
             .OrderBy(provider => provider.Priority)
             .Select(provider => new ProviderResource(provider))
             .ToArray();

@@ -16,10 +16,10 @@ public abstract class BaseIdentityService
 
     public User GetUser(string provider, string email, bool isActive)
     {
-        return _userService.GetUser(user => 
-            user.Provider.Name == provider && 
-            user.Email == email && 
-            user.IsActive == isActive
+        return _userService.Get(entity => 
+            entity.Provider.Name == provider && 
+            entity.Email == email && 
+            entity.IsActive == isActive
         );
     }
 }

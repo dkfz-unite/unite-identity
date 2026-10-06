@@ -14,25 +14,19 @@ public class ProviderService
     }
 
 
-    public Provider GetProvider(int id)
+    public Provider Get(int id)
     {
         return _dbContext.Set<Provider>()
             .FirstOrDefault(provider => provider.Id == id);
     }
 
-    public Provider GetProvider(Expression<Func<Provider, bool>> predicate)
+    public Provider Get(Expression<Func<Provider, bool>> predicate)
     {
         return _dbContext.Set<Provider>()
             .FirstOrDefault(predicate);
     }
 
-    public Provider[] GetProviders()
-    {
-        return _dbContext.Set<Provider>()
-            .ToArray();
-    }
-
-    public Provider[] GetProviders(Expression<Func<Provider, bool>> predicate)
+    public Provider[] GetAll(Expression<Func<Provider, bool>> predicate)
     {
         return _dbContext.Set<Provider>()
             .Where(predicate)
@@ -41,66 +35,55 @@ public class ProviderService
 
     public Provider Add(string name, string label, bool isActive, int? priority)
     {
-        var provider = GetProvider(provider => provider.Name == name);
-
-        if (provider == null)
-        {
-            provider = new Provider
-            {
-                Name = name,
-                Label = label,
-                IsActive = isActive,
-                Priority = priority
-            };
-
-            _dbContext.Add(provider);
-            _dbContext.SaveChanges();
-
-            return provider;
-        }
-        else
-        {
+        var entity = Get(provider => provider.Name == name);
+        if (entity != null)
             return null;
-        }
+
+        entity = new Provider
+        {
+            Name = name,
+            Label = label,
+            IsActive = isActive,
+            Priority = priority
+        };
+
+        _dbContext.Add(entity);
+        _dbContext.SaveChanges();
+
+        return entity;
     }
 
     public Provider Update(int id, string name, string label, bool isActive, int? priority)
     {
-        var provider = GetProvider(id);
-
-        if (provider != null)
-        {
-            provider.Name = name;
-            provider.Label = label;
-            provider.IsActive = isActive;
-            provider.Priority = priority;
-
-            _dbContext.Update(provider);
-            _dbContext.SaveChanges();
-
-            return provider;
-        }
-        else
-        {
+        var entity = Get(id);
+        if (entity == null)
             return null;
-        }
+
+        entity.Name = name;
+        entity.Label = label;
+        entity.IsActive = isActive;
+        entity.Priority = priority;
+
+        _dbContext.Update(entity);
+        _dbContext.SaveChanges();
+
+        return entity;
     }
 
     public bool Delete(int id)
     {
-        var provider = GetProvider(id);
-
-        if (provider != null)
-        {
-            _dbContext.Remove(provider);
-            _dbContext.SaveChanges();
-
-            return true;
-        }
-        else
-        {
+        var entity = Get(id);
+        if (entity == null)
             return false;
-        }
+
+        Delete(entity);
+        return true;
+    }
+
+    public void Delete(Provider entity)
+    {
+        _dbContext.Remove(entity);
+        _dbContext.SaveChanges();
     }
 }
 
