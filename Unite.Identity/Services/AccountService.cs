@@ -162,8 +162,9 @@ public class AccountService
     /// Possible only for 'Default' identity provider.
     /// </summary>
     /// <param name="email">User email.</param>
+    /// <param name="resetTokenLifetime">Password reset token lifetime in minutes.</param>
     /// <returns>Password reset token or null if user is not found.</returns>
-    public string RequestPasswordReset(string email)
+    public string RequestPasswordReset(string email, int resetTokenLifetime)
     {
         var entity = GetUser(email, Providers.Default, true);
         if (entity == null)
@@ -171,7 +172,7 @@ public class AccountService
 
         var token = Guid.NewGuid().ToString();
         entity.PasswordToken = PasswordHelper.GetPasswordHash(token);
-        entity.PasswordTokenExpires = DateTime.UtcNow.AddMinutes(30);
+        entity.PasswordTokenExpires = DateTime.UtcNow.AddMinutes(resetTokenLifetime);
 
         _dbContext.Update(entity);
         _dbContext.SaveChanges();

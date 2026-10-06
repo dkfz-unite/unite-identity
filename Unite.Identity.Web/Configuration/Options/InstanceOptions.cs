@@ -38,4 +38,23 @@ public class InstanceOptions
             return value;
         }
     }
+
+    /// <summary>
+    /// Password reset token lifetime in minutes. Defaults to 30.
+    /// </summary>
+    public int ResetTokenLifetime
+    {
+        get
+        {
+            var option = Environment.GetEnvironmentVariable("UNITE_RESET_TTL");
+
+            if (string.IsNullOrWhiteSpace(option))
+                return 30;
+
+            if (!int.TryParse(option, out var minutes) || minutes <= 0)
+                throw new ArgumentException("'UNITE_RESET_TTL' environment variable has to be set to a positive integer number of minutes");
+
+            return minutes;
+        }
+    }
 }

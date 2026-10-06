@@ -78,6 +78,8 @@ Changes account password.
 
 Requests a password reset email. No authentication is required.
 
+The reset token expires after `UNITE_RESET_TTL` minutes (default: 30).
+
 ### Body - application/json
 ```json
 {

@@ -25,6 +25,7 @@ ASPNETCORE_ENVIRONMENT|ASP.NET environment|Debug|Release
 UNITE_INSTANCE_HOST|Public portal base URL, including scheme (e.g. `https://unite.example.org`); used in password reset email links|http://localhost|
 UNITE_INSTANCE_PUBLIC|Allow registration without the access list (`true` or `false`)|false|false
 UNITE_RETENTION_PERIOD|Days of inactivity before non-root accounts and their saved data are deleted|90|90
+UNITE_RESET_TTL|Password reset token lifetime in minutes; must be a positive integer|30|30
 UNITE_SQL_HOST|SQL server host|localhost|sql.unite.net
 UNITE_SQL_PORT|SQL server port|5432|5432
 UNITE_SQL_USER|SQL server user||
@@ -56,6 +57,8 @@ UNITE_SMTP_USER|SMTP authentication user; required when SMTP is configured||
 UNITE_SMTP_PASSWORD|SMTP authentication password; required when SMTP is configured||
 
 SMTP configuration is optional. To enable password reset emails, set `UNITE_SMTP_HOST`, the other required SMTP variables, and `UNITE_INSTANCE_HOST` to the portal's public base URL. SMTP credentials and the sender address must be supplied by the operator; the local port, STARTTLS, and authentication values above come from `launchSettings.json`.
+
+Reset tokens expire after `UNITE_RESET_TTL` minutes. If the variable is unset or blank, the lifetime defaults to 30 minutes. Changing it applies to newly generated tokens; existing tokens keep their expiration date.
 
 Without an SMTP host, both password reset requests and confirmations return HTTP `503`. No reset token is generated or logged; only an availability warning is logged. The anonymous `GET /api/availability/password-reset` endpoint returns whether an SMTP host is configured. The portal hides the password reset link when unavailable and warns users during registration that forgetting their password means losing access to their account. Registration, login, and authenticated password changes remain available.
 

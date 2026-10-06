@@ -129,7 +129,7 @@ public class AccountController: Controller
             return result;
         }
 
-        var token = _accountService.RequestPasswordReset(model.Email);
+        var token = _accountService.RequestPasswordReset(model.Email, _instanceOptions.ResetTokenLifetime);
 
         if (token != null)
         {
