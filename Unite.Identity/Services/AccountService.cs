@@ -138,7 +138,6 @@ public class AccountService
     /// <returns>Updated user or null if user is not in access list or not registered yet.</returns>
     public User ChangePassword(string email, string newPassword, string oldPassword)
     {
-        var oldPasswordHash = PasswordHelper.GetPasswordHash(oldPassword);
         var newPasswordHash = PasswordHelper.GetPasswordHash(newPassword);
 
         var entity = GetUser(email, Providers.Default, true);
@@ -146,7 +145,7 @@ public class AccountService
         if (entity == null)
             return null;
 
-        if (entity.Password != oldPasswordHash)
+        if (!PasswordHelper.VerifyPasswordHash(entity.Password, oldPassword))
             return null;
 
         entity.Password = newPasswordHash;
@@ -171,7 +170,7 @@ public class AccountService
             return null;
 
         var token = Guid.NewGuid().ToString();
-        entity.PasswordToken = PasswordHelper.GetPasswordHash(token);
+        entity.PasswordToken = PasswordHelper.GetTokenHash(token);
         entity.PasswordTokenExpires = DateTime.UtcNow.AddMinutes(resetTokenLifetime);
 
         _dbContext.Update(entity);
@@ -189,7 +188,7 @@ public class AccountService
     /// <returns>Updated user or null if token is invalid or expired.</returns>
     public User ConfirmPasswordReset(string token, string password)
     {
-        var tokenHash = PasswordHelper.GetPasswordHash(token);
+        var tokenHash = PasswordHelper.GetTokenHash(token);
         var passwordHash = PasswordHelper.GetPasswordHash(password);
 
          var entity = GetUserByToken(tokenHash);
