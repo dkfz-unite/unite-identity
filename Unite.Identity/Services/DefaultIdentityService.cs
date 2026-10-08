@@ -13,14 +13,11 @@ public class DefaultIdentityService : BaseIdentityService, IIdentityService
 
     public User LoginUser(string email, string password)
     {
-        // TODO: Implement fallback to old hashing method.
-        var passwordHash = PasswordHelper.GetPasswordHash(password);
-
         var user = GetUser(Providers.Default, email, true);
         if (user == null)
             return null;
 
-        var authenticated = user.Password == passwordHash;
+        var authenticated = PasswordHelper.VerifyPasswordHash(user.Password, password);
 
         return authenticated ? user : null;
     }
