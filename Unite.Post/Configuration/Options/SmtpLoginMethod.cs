@@ -11,5 +11,7 @@ public enum SmtpLoginMethod
     [EnumAlias("plain", "Plain", "PLAIN")]
     Plain,
     [EnumAlias("ntlm", "Ntlm", "NTLM")]
-    Ntlm
+    Ntlm,
+    [EnumAlias("none", "None", "NONE")]
+    None
 }

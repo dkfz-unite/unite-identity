@@ -85,11 +85,11 @@ UNITE_LDAP_SERVICE_PASSWORD|LDAP service user password||
 UNITE_SMTP_HOST|Optional SMTP server host; unset or blank disables email password reset||
 UNITE_SMTP_PORT|SMTP server port; required when SMTP is configured|587|
 UNITE_SMTP_SSL_ENABLE|Use STARTTLS (`true`) or an unencrypted connection (`false`); required when SMTP is configured|true|
-UNITE_SMTP_AUTH_METHOD|SMTP authentication method: `login`, `plain`, or `ntlm`; required when SMTP is configured|login|
+UNITE_SMTP_AUTH_METHOD|SMTP authentication method: `login`, `plain`, `ntlm`, or `none` (no authentication, for relays that accept mail without login); required when SMTP is configured|login|
 UNITE_SMTP_NTLM_DOMAIN|SMTP authentication domain; required only for `ntlm`||
 UNITE_SMTP_FROM|Sender email address; required when SMTP is configured||
-UNITE_SMTP_USER|SMTP authentication user; required when SMTP is configured||
-UNITE_SMTP_PASSWORD|SMTP authentication password; required when SMTP is configured||
+UNITE_SMTP_USER|SMTP authentication user; required when SMTP is configured, unless the method is `none`||
+UNITE_SMTP_PASSWORD|SMTP authentication password; required when SMTP is configured, unless the method is `none`||
 
 SMTP configuration is optional. To enable password reset emails, set `UNITE_SMTP_HOST`, the other required SMTP variables, and `UNITE_INSTANCE_HOST` to the portal's public base URL. SMTP credentials and the sender address must be supplied by the operator; the local port, STARTTLS, and authentication values above come from `launchSettings.json`.
 

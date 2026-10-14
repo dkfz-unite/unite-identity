@@ -31,7 +31,9 @@ public class MailClient
         using var client = new SmtpClient();
         client.Connect(_smtpOptions.Host, _smtpOptions.Port, _smtpOptions.EnableSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.None);
 
-        Login(client);
+        if (_smtpOptions.LoginMethod != SmtpLoginMethod.None)
+            Login(client);
+
         client.Send(message);
         client.Disconnect(true);
     }
