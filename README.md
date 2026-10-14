@@ -1,15 +1,50 @@
 # unite-identity
+
+Shared architecture, development workflows, and agent instructions:
+[UNITE project documentation](https://github.com/dkfz-unite/.github/blob/main/README.md).
+
 Unite identity service.
 
 ## General
 Identity service provides the following functionality:
-- [Identity service web API](/Docs/api.md) - Identity service REST API.
+- [Identity service web API](Docs/api.md) - Identity service REST API.
 
+`UNITE_INSTANCE_PUBLIC=true` allows registration without an access list;
+private instances require an email added by an administrator. This setting
+controls instance access, separately from public/private project visibility.
 
-Identity service is written in ASP.NET (.NET 7)
+Active application permissions are `Data.Read` (default) and `Data.Write` for
+data changes. A root administrator is created from configured credentials if
+absent. Administrators can issue long-lived service JWTs with permissions;
+`unite-data-source` currently uses this worker/token mechanism. Worker-token
+scope for private projects is not yet defined.
+
+The repository includes the internal `Unite.Post` project for SMTP email
+sending, currently used for password-reset emails. It is referenced by Identity
+Web and configured with the `UNITE_SMTP_*` settings documented below.
+
+Identity also supports an LDAP provider: credential verification occurs against
+the organization's LDAP server, while UNITE still manages its user, session,
+JWT, and permission flow. `UNITE_LDAP_ACTIVE` enables LDAP alongside the standard
+provider. The owner also described LDAP-only use; however, current
+`DefaultProviderOptions.Active` is hard-coded to `true`, so the precise
+replacement configuration remains to be clarified for this checkout.
+
+JWTs are signed with HMAC-SHA256; internal services use `UNITE_API_KEY` to
+validate the signature and lifetime, then apply authorization policies. The
+payload is not encrypted by this key.
+
+Identity removes expired sessions and non-root accounts after inactivity.
+Account deletion removes saved dataset/analysis records and SQL analysis tasks.
+The portal's explicit account-deletion flow also invokes the Analysis API's
+file deletion; shared analysis-directory cleanup through other deletion paths
+remains to be fully verified.
+
+Identity service is written in ASP.NET (.NET 8).
 
 ## Dependencies
-- [SQL](https://github.com/dkfz-unite/unite-environment/tree/main/programs/postgresql) - SQL server with domain data and user identity data.
+- [SQL](https://github.com/dkfz-unite/unite-env/tree/main/programs/postgresql) - SQL server with domain data and user identity data.
+- [MongoDB](https://github.com/dkfz-unite/unite-env/tree/main/programs/mongodb) - saved user data accessed during account cleanup.
 
 ## Access
 Environment|Address|Port
@@ -18,7 +53,7 @@ Host|http://localhost:5000|5000
 Docker|http://identity.unite.net|80
 
 ## Configuration
-To configure the application, change environment variables in either docker or [launchSettings.json](/Unite.Identity.Web/Properties/launchSettings.json) file (if running locally):
+To configure the application, change environment variables in either docker or [launchSettings.json](Unite.Identity.Web/Properties/launchSettings.json) file (if running locally):
 Variable|Description|Default(Local)|Default(Docker)
 --------|-----------|--------------|---------------
 ASPNETCORE_ENVIRONMENT|ASP.NET environment|Debug|Release
@@ -34,7 +69,7 @@ UNITE_MONGO_HOST|MongoDB server host; used to remove saved datasets and analyses
 UNITE_MONGO_PORT|MongoDB server port|27017|27017
 UNITE_MONGO_USER|MongoDB server user||
 UNITE_MONGO_PASSWORD|MongoDB server password||
-UNITE_API_KEY|32 bit string API key||
+UNITE_API_KEY|Shared JWT signing/validation key; current implementation requires 32 characters encoded as ASCII||
 UNITE_ADMIN_USER|Root user login||
 UNITE_ADMIN_PASSWORD|Root user password||
 UNITE_DEFAULT_LABEL|Default identity provider title|UNITE|UNITE
@@ -50,11 +85,11 @@ UNITE_LDAP_SERVICE_PASSWORD|LDAP service user password||
 UNITE_SMTP_HOST|Optional SMTP server host; unset or blank disables email password reset||
 UNITE_SMTP_PORT|SMTP server port; required when SMTP is configured|587|
 UNITE_SMTP_SSL_ENABLE|Use STARTTLS (`true`) or an unencrypted connection (`false`); required when SMTP is configured|true|
-UNITE_SMTP_AUTH_METHOD|SMTP authentication method: `login`, `plain`, or `ntlm`; required when SMTP is configured|login|
+UNITE_SMTP_AUTH_METHOD|SMTP authentication method: `login`, `plain`, `ntlm`, or `none` (no authentication, for relays that accept mail without login); required when SMTP is configured|login|
 UNITE_SMTP_NTLM_DOMAIN|SMTP authentication domain; required only for `ntlm`||
 UNITE_SMTP_FROM|Sender email address; required when SMTP is configured||
-UNITE_SMTP_USER|SMTP authentication user; required when SMTP is configured||
-UNITE_SMTP_PASSWORD|SMTP authentication password; required when SMTP is configured||
+UNITE_SMTP_USER|SMTP authentication user; required when SMTP is configured, unless the method is `none`||
+UNITE_SMTP_PASSWORD|SMTP authentication password; required when SMTP is configured, unless the method is `none`||
 
 SMTP configuration is optional. To enable password reset emails, set `UNITE_SMTP_HOST`, the other required SMTP variables, and `UNITE_INSTANCE_HOST` to the portal's public base URL. SMTP credentials and the sender address must be supplied by the operator; the local port, STARTTLS, and authentication values above come from `launchSettings.json`.
 
@@ -66,11 +101,11 @@ Without an SMTP host, both password reset requests and confirmations return HTTP
 
 ### Docker Compose
 The easiest way to install the application is to use docker-compose:
-- Environment configuration and installation scripts: https://github.com/dkfz-unite/unite-environment
-- Identity service configuration and installation scripts: https://github.com/dkfz-unite/unite-environment/tree/main/applications/unite-identity
+- [Environment configuration and installation scripts](https://github.com/dkfz-unite/unite-env)
+- [Identity service configuration and installation scripts](https://github.com/dkfz-unite/unite-env/tree/main/applications/unite-identity)
 
 ### Docker
-[Dockerfile](/Dockerfile) is used to build an image of the application.
+[Dockerfile](Dockerfile) is used to build an image of the application.
 To build an image run the following command:
 ```
 docker build -t unite.identity:latest .

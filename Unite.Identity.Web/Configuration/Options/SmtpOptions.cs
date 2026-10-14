@@ -62,7 +62,7 @@ public class SmtpOptions : ISmtpOptions
             }
             catch (Exception exception)
             {
-                throw new InvalidOperationException("UNITE_SMTP_AUTH_METHOD environment variable has to be set to 'login', 'plain' or 'ntlm'.", exception);
+                throw new InvalidOperationException("UNITE_SMTP_AUTH_METHOD environment variable has to be set to 'login', 'plain', 'ntlm' or 'none'.", exception);
             }
         }
     }
@@ -87,6 +87,9 @@ public class SmtpOptions : ISmtpOptions
     {
         get
         {
+            if (LoginMethod == SmtpLoginMethod.None)
+                return null;
+
             var option = Environment.GetEnvironmentVariable("UNITE_SMTP_USER");
 
             if (string.IsNullOrWhiteSpace(option))
@@ -100,6 +103,9 @@ public class SmtpOptions : ISmtpOptions
     {
         get
         {
+            if (LoginMethod == SmtpLoginMethod.None)
+                return null;
+
             var option = Environment.GetEnvironmentVariable("UNITE_SMTP_PASSWORD");
 
             if (string.IsNullOrEmpty(option))
