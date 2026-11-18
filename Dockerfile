@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 ENV ASPNETCORE_HTTP_PORTS=80
@@ -7,24 +9,27 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS restore
 ARG USER
-ARG TOKEN
 WORKDIR /src
-RUN dotnet nuget add source https://nuget.pkg.github.com/dkfz-unite/index.json -n github -u ${USER} -p ${TOKEN} --store-password-in-clear-text
 COPY ["Unite.Post/Unite.Post.csproj", "Unite.Post/"]
 COPY ["Unite.Identity/Unite.Identity.csproj", "Unite.Identity/"]
 COPY ["Unite.Identity.Web/Unite.Identity.Web.csproj", "Unite.Identity.Web/"]
-RUN dotnet restore "Unite.Post/Unite.Post.csproj"
-RUN dotnet restore "Unite.Identity/Unite.Identity.csproj"
-RUN dotnet restore "Unite.Identity.Web/Unite.Identity.Web.csproj"
+RUN --mount=type=secret,id=github_token \
+    dotnet nuget add source https://nuget.pkg.github.com/dkfz-unite/index.json -n github -u ${USER} -p "$(cat /run/secrets/github_token)" --store-password-in-clear-text \
+    && dotnet restore "Unite.Post/Unite.Post.csproj" \
+    && dotnet restore "Unite.Identity/Unite.Identity.csproj" \
+    && dotnet restore "Unite.Identity.Web/Unite.Identity.Web.csproj" \
+    && dotnet nuget remove source github
 
 FROM restore AS build
 COPY . .
 WORKDIR "/src/Unite.Identity.Web"
-RUN dotnet build "Unite.Identity.Web.csproj" -c Release
+RUN --mount=type=secret,id=github_token \
+    dotnet nuget add source https://nuget.pkg.github.com/dkfz-unite/index.json -n github -u ${USER} -p "$(cat /run/secrets/github_token)" --store-password-in-clear-text \
+    && dotnet build "Unite.Identity.Web.csproj" -c Release \
+    && dotnet nuget remove source github
 
 FROM build AS publish
-RUN dotnet publish "Unite.Identity.Web.csproj" -c Release -o /app/publish
-#--no-restore
+RUN dotnet publish --no-build "Unite.Identity.Web.csproj" -c Release -o /app/publish
 
 FROM base AS final
 RUN apt-get update \
